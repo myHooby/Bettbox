@@ -254,7 +254,6 @@ class SpeedTestConcurrencyItem extends ConsumerWidget {
     );
 
     return ListItem<int>.options(
-      leading: const Icon(Icons.format_list_numbered),
       title: Text(appLocalizations.speedTestConcurrency),
       subtitle: Text(appLocalizations.speedTestConcurrencyDesc),
       delegate: OptionsDelegate(
