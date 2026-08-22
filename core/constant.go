@@ -78,6 +78,13 @@ type TestDelayParams struct {
 	Timeout   int64  `json:"timeout"`
 }
 
+// SpeedTestParams 网速测试参数,Timeout 即测试时长(毫秒),到期后停止下载并结算
+type SpeedTestParams struct {
+	ProxyName string `json:"proxy-name"`
+	TestUrl   string `json:"test-url"`
+	Timeout   int64  `json:"timeout"`
+}
+
 type ExternalProvider struct {
 	Name             string                     `json:"name"`
 	Type             string                     `json:"type"`
@@ -104,6 +111,7 @@ const (
 	getTotalTrafficMethod          Method = "getTotalTraffic"
 	resetTrafficMethod             Method = "resetTraffic"
 	asyncTestDelayMethod           Method = "asyncTestDelay"
+	asyncSpeedTestMethod           Method = "asyncSpeedTest"
 	getConnectionsMethod           Method = "getConnections"
 	closeConnectionsMethod         Method = "closeConnections"
 	resetConnectionsMethod         Method = "resetConnectionsMethod"
@@ -145,16 +153,35 @@ type Delay struct {
 	Value int32  `json:"value"`
 }
 
+// SpeedResult 网速测试最终结果:Speed 为平均下载速度(字节/秒),失败时为 -1
+type SpeedResult struct {
+	Url      string  `json:"url"`
+	Name     string  `json:"name"`
+	Speed    float64 `json:"speed"`
+	Bytes    int64   `json:"bytes"`
+	Duration int64   `json:"duration"`
+}
+
+// SpeedTestProgress 网速测试实时进度,经消息通道推送给 Dart
+type SpeedTestProgress struct {
+	Url     string  `json:"url"`
+	Name    string  `json:"name"`
+	Speed   float64 `json:"speed"`
+	Bytes   int64   `json:"bytes"`
+	Elapsed int64   `json:"elapsed"`
+}
+
 type Message struct {
 	Type MessageType `json:"type"`
 	Data interface{} `json:"data"`
 }
 
 const (
-	LogMessage     MessageType = "log"
-	DelayMessage   MessageType = "delay"
-	RequestMessage MessageType = "request"
-	LoadedMessage  MessageType = "loaded"
+	LogMessage       MessageType = "log"
+	DelayMessage     MessageType = "delay"
+	SpeedTestMessage MessageType = "speedTest"
+	RequestMessage   MessageType = "request"
+	LoadedMessage    MessageType = "loaded"
 )
 
 func (message *Message) Json() (string, error) {

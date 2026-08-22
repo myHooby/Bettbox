@@ -6,7 +6,10 @@ import (
 	"core/state"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net"
+	"net/http"
+	"net/url"
 	"os"
 	"runtime"
 	"runtime/debug"
@@ -20,6 +23,7 @@ import (
 	"github.com/metacubex/mihomo/common/utils"
 	"github.com/metacubex/mihomo/common/yaml"
 	"github.com/metacubex/mihomo/component/age"
+	"github.com/metacubex/mihomo/component/ca"
 	"github.com/metacubex/mihomo/component/mmdb"
 	"github.com/metacubex/mihomo/component/resolver"
 	"github.com/metacubex/mihomo/component/updater"
@@ -271,6 +275,190 @@ func handleAsyncTestDelay(paramsString string, fn func(string)) {
 		delayData.Value = int32(delay)
 		data, _ := json.Marshal(delayData)
 		fn(string(data))
+		return false, nil
+	})
+}
+
+// speedTestURLToMetadata 将下载测速地址解析为出站连接所需的元数据。
+// 逻辑与 adapter 包内 urlToMetadata 保持一致,复制到本包以避免修改 Clash.Meta 源码。
+func speedTestURLToMetadata(rawURL string) (addr constant.Metadata, err error) {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return
+	}
+
+	port := u.Port()
+	if port == "" {
+		switch u.Scheme {
+		case "https":
+			port = "443"
+		case "http":
+			port = "80"
+		default:
+			err = fmt.Errorf("%s scheme not Support", rawURL)
+			return
+		}
+	}
+
+	err = addr.SetRemoteAddress(net.JoinHostPort(u.Hostname(), port))
+	return
+}
+
+// speedTestCounter 统计已下载字节数,并按秒推送实时进度消息
+type speedTestCounter struct {
+	name       string
+	url        string
+	total      int64
+	start      time.Time
+	lastReport time.Time
+}
+
+func (c *speedTestCounter) Write(p []byte) (int, error) {
+	c.total += int64(len(p))
+	if now := time.Now(); now.Sub(c.lastReport) >= time.Second {
+		elapsed := now.Sub(c.start).Seconds()
+		sendMessage(Message{
+			Type: SpeedTestMessage,
+			Data: &SpeedTestProgress{
+				Url:     c.url,
+				Name:    c.name,
+				Speed:   float64(c.total) / elapsed,
+				Bytes:   c.total,
+				Elapsed: int64(elapsed * 1000),
+			},
+		})
+		c.lastReport = now
+	}
+	return len(p), nil
+}
+
+// handleAsyncSpeedTest 对指定节点执行下载带宽测试:
+// 经节点出站连接下载测速文件,按固定时长(Timeout)统计字节流量,期间每秒推送实时进度。
+// 不经过 adapter.URLTest,避免测速写入节点延迟历史。
+func handleAsyncSpeedTest(paramsString string, fn func(string)) {
+	mBatch.Go(paramsString, func() (bool, error) {
+		var params = &SpeedTestParams{}
+		err := json.Unmarshal([]byte(paramsString), params)
+		if err != nil {
+			fn("")
+			return false, nil
+		}
+
+		result := &SpeedResult{
+			Name: params.ProxyName,
+			Url:  params.TestUrl,
+		}
+		finishWith := func(speed float64, bytes int64, duration int64) {
+			result.Speed = speed
+			result.Bytes = bytes
+			result.Duration = duration
+			data, _ := json.Marshal(result)
+			fn(string(data))
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(params.Timeout))
+		defer cancel()
+
+		var proxy constant.Proxy
+		var exist bool
+		if proxy, exist = tunnel.Proxies()[params.ProxyName]; !exist {
+			for _, provider := range tunnel.Providers() {
+				for _, p := range provider.Proxies() {
+					if p.Name() == params.ProxyName {
+						proxy = p
+						exist = true
+						break
+					}
+				}
+				if exist {
+					break
+				}
+			}
+		}
+
+		if proxy == nil || params.TestUrl == "" {
+			finishWith(-1, 0, 0)
+			return false, nil
+		}
+
+		addr, err := speedTestURLToMetadata(params.TestUrl)
+		if err != nil {
+			finishWith(-1, 0, 0)
+			return false, nil
+		}
+
+		instance, err := proxy.DialContext(ctx, &addr)
+		if err != nil {
+			finishWith(-1, 0, 0)
+			return false, nil
+		}
+		defer func() {
+			_ = instance.Close()
+		}()
+
+		req, err := http.NewRequest(http.MethodGet, params.TestUrl, nil)
+		if err != nil {
+			finishWith(-1, 0, 0)
+			return false, nil
+		}
+		req = req.WithContext(ctx)
+
+		tlsConfig, err := ca.GetTLSConfig(ca.Option{})
+		if err != nil {
+			finishWith(-1, 0, 0)
+			return false, nil
+		}
+
+		// 出站必须复用节点的拨号连接,禁止回退默认 Transport 绕过节点
+		transport := &http.Transport{
+			DialContext: func(context.Context, string, string) (net.Conn, error) {
+				return instance, nil
+			},
+			MaxIdleConns:          100,
+			IdleConnTimeout:       90 * time.Second,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ExpectContinueTimeout: 1 * time.Second,
+			TLSClientConfig:       tlsConfig,
+		}
+
+		client := http.Client{
+			Transport: transport,
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
+		defer client.CloseIdleConnections()
+
+		resp, err := client.Do(req)
+		if err != nil {
+			finishWith(-1, 0, 0)
+			return false, nil
+		}
+		defer func() {
+			_ = resp.Body.Close()
+		}()
+
+		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+			finishWith(-1, 0, 0)
+			return false, nil
+		}
+
+		start := time.Now()
+		counter := &speedTestCounter{
+			name:       params.ProxyName,
+			url:        params.TestUrl,
+			start:      start,
+			lastReport: start,
+		}
+		// ctx 超时(即测试时长)或下载结束时 Copy 返回,已统计字节数不受影响
+		_, _ = io.Copy(counter, resp.Body)
+
+		elapsed := time.Since(start)
+		if elapsed <= 0 || counter.total <= 0 {
+			finishWith(-1, 0, elapsed.Milliseconds())
+			return false, nil
+		}
+		finishWith(float64(counter.total)/elapsed.Seconds(), counter.total, elapsed.Milliseconds())
 		return false, nil
 	})
 }
