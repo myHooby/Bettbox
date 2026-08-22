@@ -363,7 +363,7 @@
   "healthCheckTimeout": "Timeout",
   "healthCheckTimeoutDesc": "Node health check timeout",
   "concurrencyLimit": "Concurrency Limit",
-  "concurrencyLimitDesc": "Maximum concurrent delay tests",
+  "concurrencyLimitDesc": "Maximum concurrent delay/speed tests",
   "notRecommended": "Not Recommended",
   "overrideDns": "Override DNS",
   "overrideDnsDesc": "Override profile's DNS settings",

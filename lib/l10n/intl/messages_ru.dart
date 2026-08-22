@@ -267,7 +267,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Лимит параллелизма",
     ),
     "concurrencyLimitDesc": MessageLookupByLibrary.simpleMessage(
-      "Максимальное количество параллельных тестов задержки",
+      "Максимальное количество параллельных тестов задержки и скорости",
     ),
     "confirm": MessageLookupByLibrary.simpleMessage("Подтвердить"),
     "connection": MessageLookupByLibrary.simpleMessage("Соединения"),

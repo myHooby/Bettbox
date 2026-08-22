@@ -363,7 +363,7 @@
   "healthCheckTimeout": "Таймаут проверки",
   "healthCheckTimeoutDesc": "Таймаут проверки работоспособности узлов",
   "concurrencyLimit": "Лимит параллелизма",
-  "concurrencyLimitDesc": "Максимальное количество параллельных тестов задержки",
+  "concurrencyLimitDesc": "Максимальное количество параллельных тестов задержки и скорости",
   "notRecommended": "Не рекомендуется",
   "overrideDns": "Переопределить DNS",
   "overrideDnsDesc": "Включить переопределение настроек DNS в конфигурации",

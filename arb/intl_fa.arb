@@ -363,7 +363,7 @@
   "healthCheckTimeout": "مهلت زمانی تست",
   "healthCheckTimeoutDesc": "مهلت زمانی تست سلامت نودها",
   "concurrencyLimit": "محدودیت همزمانی",
-  "concurrencyLimitDesc": "حداکثر تعداد تست همزمان تاخیر",
+  "concurrencyLimitDesc": "حداکثر تعداد تست همزمان تاخیر/سرعت",
   "notRecommended": "توصیه نمی‌شود",
   "overrideDns": "اورراید DNS",
   "overrideDnsDesc": "جایگزینی تنظیمات DNS پروفایل",

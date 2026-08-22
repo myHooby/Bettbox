@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bett_box/models/models.dart';
 import 'package:bett_box/views/proxies/common.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,7 +9,6 @@ void main() {
 
       expect(coordinator.isTesting, isFalse);
       expect(coordinator.testingGroupName, null);
-      expect(coordinator.currentProxyName, null);
 
       var actionExecuted = false;
       final testFuture = coordinator.run('ProxyGroup', () async {
@@ -43,25 +40,18 @@ void main() {
 
       expect(coordinator.isTesting, isFalse);
       expect(coordinator.testingGroupName, null);
-      expect(coordinator.currentProxyName, null);
     });
 
-    test('开始与结束时各通知监听器一次,切换节点时单独通知', () async {
+    test('开始与结束时各通知监听器一次', () async {
       final coordinator = SpeedTestCoordinator();
       var notifications = 0;
       coordinator.addListener(() {
         notifications++;
       });
 
-      await coordinator.run('ProxyGroup', () async {
-        coordinator.setCurrentProxy('node-a');
-        coordinator.setCurrentProxy('node-a');
-        coordinator.setCurrentProxy('node-b');
-      });
+      await coordinator.run('ProxyGroup', () async {});
 
-      // run 起止各一次,setCurrentProxy 去重后两次
-      expect(notifications, 4);
-      expect(coordinator.currentProxyName, null);
+      expect(notifications, 2);
     });
   });
 

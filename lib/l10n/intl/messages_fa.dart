@@ -264,7 +264,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "concurrencyLimit": MessageLookupByLibrary.simpleMessage("محدودیت همزمانی"),
     "concurrencyLimitDesc": MessageLookupByLibrary.simpleMessage(
-      "حداکثر تعداد تست همزمان تاخیر",
+      "حداکثر تعداد تست همزمان تاخیر/سرعت",
     ),
     "confirm": MessageLookupByLibrary.simpleMessage("تایید"),
     "connection": MessageLookupByLibrary.simpleMessage("اتصال فعال"),

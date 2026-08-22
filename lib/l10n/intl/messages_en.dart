@@ -268,7 +268,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Concurrency Limit",
     ),
     "concurrencyLimitDesc": MessageLookupByLibrary.simpleMessage(
-      "Maximum concurrent delay tests",
+      "Maximum concurrent delay/speed tests",
     ),
     "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
     "connection": MessageLookupByLibrary.simpleMessage("Active"),

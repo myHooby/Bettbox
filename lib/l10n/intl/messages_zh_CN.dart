@@ -188,7 +188,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "开启将失去部分应用能力，获得全量的 Clash 支持",
     ),
     "concurrencyLimit": MessageLookupByLibrary.simpleMessage("并发限制"),
-    "concurrencyLimitDesc": MessageLookupByLibrary.simpleMessage("延迟测试的最大并发数量"),
+    "concurrencyLimitDesc": MessageLookupByLibrary.simpleMessage(
+      "延迟/网速测试的最大并发数量",
+    ),
     "confirm": MessageLookupByLibrary.simpleMessage("确定"),
     "connection": MessageLookupByLibrary.simpleMessage("活跃连接"),
     "connections": MessageLookupByLibrary.simpleMessage("连接"),

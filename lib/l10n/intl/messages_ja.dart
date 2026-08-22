@@ -209,7 +209,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "concurrencyLimit": MessageLookupByLibrary.simpleMessage("並行テスト制限"),
     "concurrencyLimitDesc": MessageLookupByLibrary.simpleMessage(
-      "レイテンシテストの最大並行数",
+      "レイテンシ/スピードテストの最大並行数",
     ),
     "confirm": MessageLookupByLibrary.simpleMessage("確定"),
     "connection": MessageLookupByLibrary.simpleMessage("アクティブ接続"),

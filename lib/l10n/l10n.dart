@@ -2949,10 +2949,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Maximum concurrent delay tests`
+  /// `Maximum concurrent delay/speed tests`
   String get concurrencyLimitDesc {
     return Intl.message(
-      'Maximum concurrent delay tests',
+      'Maximum concurrent delay/speed tests',
       name: 'concurrencyLimitDesc',
       desc: '',
       args: [],

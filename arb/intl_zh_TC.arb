@@ -363,7 +363,7 @@
   "healthCheckTimeout": "超時時間",
   "healthCheckTimeoutDesc": "節點健康檢查超時時間",
   "concurrencyLimit": "並發限制",
-  "concurrencyLimitDesc": "延遲測試的最大並發數量",
+  "concurrencyLimitDesc": "延遲/網速測試的最大並發數量",
   "notRecommended": "不推薦",
   "overrideDns": "覆寫 DNS",
   "overrideDnsDesc": "開啟後將覆蓋設定中的 DNS 選項",

@@ -219,7 +219,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "concurrencyLimit": MessageLookupByLibrary.simpleMessage("동시 테스트 제한"),
     "concurrencyLimitDesc": MessageLookupByLibrary.simpleMessage(
-      "지연 시간 테스트 최대 동시 실행 수",
+      "지연 시간/속도 테스트 최대 동시 실행 수",
     ),
     "confirm": MessageLookupByLibrary.simpleMessage("확인"),
     "connection": MessageLookupByLibrary.simpleMessage("활성 연결"),

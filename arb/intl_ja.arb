@@ -363,7 +363,7 @@
   "healthCheckTimeout": "タイムアウト時間",
   "healthCheckTimeoutDesc": "ヘルスチェックのタイムアウト時間",
   "concurrencyLimit": "並行テスト制限",
-  "concurrencyLimitDesc": "レイテンシテストの最大並行数",
+  "concurrencyLimitDesc": "レイテンシ/スピードテストの最大並行数",
   "notRecommended": "非推奨",
   "overrideDns": "DNSオーバーライド",
   "overrideDnsDesc": "プロファイル内のDNS設定を上書き",

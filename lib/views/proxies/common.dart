@@ -34,16 +34,12 @@ class DelayTestCoordinator extends ChangeNotifier {
 
 final delayTestCoordinator = DelayTestCoordinator();
 
-// 网速测试全局互斥协调器:带宽测试必须串行独占,任意时刻仅允许一个节点在测
+// 网速测试全局互斥协调器:同一时刻仅允许一个组(或单节点)的测试在运行,
+// 组内节点由 speedTest 按并发限制分批并行
 class SpeedTestCoordinator extends ChangeNotifier {
   String? _testingGroupName;
 
-  String? _currentProxyName;
-
   String? get testingGroupName => _testingGroupName;
-
-  // 当前正在测试的节点名,供对话框与进度展示使用
-  String? get currentProxyName => _currentProxyName;
 
   bool get isTesting => _testingGroupName != null;
 
@@ -61,15 +57,8 @@ class SpeedTestCoordinator extends ChangeNotifier {
       return true;
     } finally {
       _testingGroupName = null;
-      _currentProxyName = null;
       notifyListeners();
     }
-  }
-
-  void setCurrentProxy(String proxyName) {
-    if (_currentProxyName == proxyName) return;
-    _currentProxyName = proxyName;
-    notifyListeners();
   }
 }
 
@@ -256,7 +245,6 @@ Future<bool> proxySpeedTest(Proxy proxy) async {
 Future<bool> _testProxySpeed(String proxyName) async {
   final appController = globalState.appController;
   final proxiesStyle = globalState.config.proxiesStyle;
-  speedTestCoordinator.setCurrentProxy(proxyName);
   // 置 0 表示测试中,与延迟测试的展示约定一致
   appController.setSpeed(
     SpeedResult(name: proxyName, url: proxiesStyle.speedTestUrl, speed: 0),
@@ -281,7 +269,9 @@ Future<bool> _testProxySpeed(String proxyName) async {
   }
 }
 
-// 网速测试入口:组内可测节点按实际节点名去重后串行执行(独占带宽保证结果准确)
+// 网速测试入口:组内可测节点按实际节点名去重后分批并行执行,
+// 复用延迟测试的并发限制;内核侧单组并发上限 50,超出部分自动排队。
+// 并行会分抢带宽,单节点绝对值偏低但相对排序仍准确
 Future<bool> speedTest(
   List<Proxy> proxies, {
   String? groupName,
@@ -302,9 +292,19 @@ Future<bool> speedTest(
       }
       names.add(name);
     }
-    for (final name in names) {
-      await _testProxySpeed(name);
+    final concurrencyLimit = globalState.config.proxiesStyle.concurrencyLimit;
+
+    final speedTasks = names.map((name) {
+      return () async {
+        await _testProxySpeed(name);
+      };
+    }).toList();
+
+    final batchedTasks = speedTasks.batch(concurrencyLimit);
+    for (final batchTasks in batchedTasks) {
+      await Future.wait(batchTasks.map((task) => task()));
     }
+    appController.addSortNum();
   }
 
   final name = groupName ?? '';
