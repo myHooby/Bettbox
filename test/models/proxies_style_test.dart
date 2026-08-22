@@ -49,12 +49,14 @@ void main() {
 
       expect(style.speedTestUrl, defaultSpeedTestUrl);
       expect(style.speedTestDuration, 10);
+      expect(style.speedTestConcurrency, 8);
     });
 
     test('测速配置序列化往返一致', () {
       const style = ProxiesStyle(
         speedTestUrl: 'https://example.com/__down?bytes=1024',
         speedTestDuration: 30,
+        speedTestConcurrency: 16,
       );
 
       final restored = ProxiesStyle.fromJson(
@@ -63,6 +65,7 @@ void main() {
 
       expect(restored.speedTestUrl, style.speedTestUrl);
       expect(restored.speedTestDuration, 30);
+      expect(restored.speedTestConcurrency, 16);
     });
 
     test('旧 JSON 缺少测速字段时回落默认值', () {

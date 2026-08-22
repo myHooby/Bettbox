@@ -267,6 +267,8 @@
   "speedTestUrl": "آدرس تست سرعت",
   "speedTestDuration": "مدت تست",
   "speedTestDurationDesc": "مدت تست دانلود برای هر گره",
+  "speedTestConcurrency": "همزمانی تست سرعت",
+  "speedTestConcurrencyDesc": "تعداد گره‌های تست‌شده به‌طور همزمان؛ بیشتر باشد سریع‌تر تمام می‌شود اما مقادیر هر گره پایین‌تر می‌آید",
   "speedTestFailed": "تست ناموفق بود",
   "speedTestCompleted": "تست کامل شد",
   "speedTestTrafficTip": "تست گروهی فایل‌ها را یکی‌یکی دانلود می‌کند و ممکن است حجم زیادی از داده مصرف کند",

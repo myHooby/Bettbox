@@ -267,6 +267,8 @@
   "speedTestUrl": "Speed Test URL",
   "speedTestDuration": "Speed Test Duration",
   "speedTestDurationDesc": "Download test duration per node",
+  "speedTestConcurrency": "Speed Test Concurrency",
+  "speedTestConcurrencyDesc": "Nodes tested simultaneously; higher is faster but per-node readings drop",
   "speedTestFailed": "Test Failed",
   "speedTestCompleted": "Test Completed",
   "speedTestTrafficTip": "Batch speed test downloads files one by one and may consume a lot of data",

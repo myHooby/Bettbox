@@ -267,6 +267,8 @@
   "speedTestUrl": "속도 테스트 URL",
   "speedTestDuration": "테스트 시간",
   "speedTestDurationDesc": "노드별 다운로드 테스트 시간",
+  "speedTestConcurrency": "속도 테스트 동시 실행",
+  "speedTestConcurrencyDesc": "동시에 테스트할 노드 수. 높을수록 빠르지만 노드별 측정값은 낮아집니다",
   "speedTestFailed": "테스트 실패",
   "speedTestCompleted": "테스트 완료",
   "speedTestTrafficTip": "일괄 테스트는 노드마다 순서대로 파일을 다운로드하여 많은 데이터를 소모할 수 있습니다",

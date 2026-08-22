@@ -270,8 +270,8 @@ Future<bool> _testProxySpeed(String proxyName) async {
 }
 
 // 网速测试入口:组内可测节点按实际节点名去重后分批并行执行,
-// 复用延迟测试的并发限制;内核侧单组并发上限 50,超出部分自动排队。
-// 并行会分抢带宽,单节点绝对值偏低但相对排序仍准确
+// 并发度由应用程序设置中的「网速测试并发」控制(默认 8),
+// 并发越高测完越快但单节点读数因带宽平分而偏低,相对排序不受影响
 Future<bool> speedTest(
   List<Proxy> proxies, {
   String? groupName,
@@ -292,7 +292,7 @@ Future<bool> speedTest(
       }
       names.add(name);
     }
-    final concurrencyLimit = globalState.config.proxiesStyle.concurrencyLimit;
+    final concurrency = globalState.config.proxiesStyle.speedTestConcurrency;
 
     final speedTasks = names.map((name) {
       return () async {
@@ -300,7 +300,7 @@ Future<bool> speedTest(
       };
     }).toList();
 
-    final batchedTasks = speedTasks.batch(concurrencyLimit);
+    final batchedTasks = speedTasks.batch(concurrency);
     for (final batchTasks in batchedTasks) {
       await Future.wait(batchTasks.map((task) => task()));
     }

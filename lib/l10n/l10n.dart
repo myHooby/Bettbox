@@ -2219,6 +2219,26 @@ class AppLocalizations {
     );
   }
 
+  /// `Speed Test Concurrency`
+  String get speedTestConcurrency {
+    return Intl.message(
+      'Speed Test Concurrency',
+      name: 'speedTestConcurrency',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nodes tested simultaneously; higher is faster but per-node readings drop`
+  String get speedTestConcurrencyDesc {
+    return Intl.message(
+      'Nodes tested simultaneously; higher is faster but per-node readings drop',
+      name: 'speedTestConcurrencyDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Test Failed`
   String get speedTestFailed {
     return Intl.message(

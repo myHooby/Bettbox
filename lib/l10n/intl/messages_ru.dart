@@ -1081,6 +1081,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "specialRules": MessageLookupByLibrary.simpleMessage("Специальные правила"),
     "speedTest": MessageLookupByLibrary.simpleMessage("Тест скорости"),
     "speedTestCompleted": MessageLookupByLibrary.simpleMessage("Тест завершён"),
+    "speedTestConcurrency": MessageLookupByLibrary.simpleMessage(
+      "Параллельность теста скорости",
+    ),
+    "speedTestConcurrencyDesc": MessageLookupByLibrary.simpleMessage(
+      "Число узлов, тестируемых одновременно; чем выше, тем быстрее, но показания по узлам ниже",
+    ),
     "speedTestDuration": MessageLookupByLibrary.simpleMessage(
       "Длительность теста",
     ),

@@ -859,6 +859,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "specialRules": MessageLookupByLibrary.simpleMessage("특수 규칙"),
     "speedTest": MessageLookupByLibrary.simpleMessage("속도 테스트"),
     "speedTestCompleted": MessageLookupByLibrary.simpleMessage("테스트 완료"),
+    "speedTestConcurrency": MessageLookupByLibrary.simpleMessage(
+      "속도 테스트 동시 실행",
+    ),
+    "speedTestConcurrencyDesc": MessageLookupByLibrary.simpleMessage(
+      "동시에 테스트할 노드 수. 높을수록 빠르지만 노드별 측정값은 낮아집니다",
+    ),
     "speedTestDuration": MessageLookupByLibrary.simpleMessage("테스트 시간"),
     "speedTestDurationDesc": MessageLookupByLibrary.simpleMessage(
       "노드별 다운로드 테스트 시간",

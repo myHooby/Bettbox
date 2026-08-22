@@ -1094,6 +1094,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "specialRules": MessageLookupByLibrary.simpleMessage("قوانین ویژه"),
     "speedTest": MessageLookupByLibrary.simpleMessage("تست سرعت"),
     "speedTestCompleted": MessageLookupByLibrary.simpleMessage("تست کامل شد"),
+    "speedTestConcurrency": MessageLookupByLibrary.simpleMessage(
+      "همزمانی تست سرعت",
+    ),
+    "speedTestConcurrencyDesc": MessageLookupByLibrary.simpleMessage(
+      "تعداد گره‌های تست‌شده به‌طور همزمان؛ بیشتر باشد سریع‌تر تمام می‌شود اما مقادیر هر گره پایین‌تر می‌آید",
+    ),
     "speedTestDuration": MessageLookupByLibrary.simpleMessage("مدت تست"),
     "speedTestDurationDesc": MessageLookupByLibrary.simpleMessage(
       "مدت تست دانلود برای هر گره",

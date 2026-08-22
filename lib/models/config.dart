@@ -281,6 +281,8 @@ abstract class ProxiesStyle with _$ProxiesStyle {
     @Default(250) int concurrencyLimit,
     @Default(defaultSpeedTestUrl) String speedTestUrl,
     @Default(10) int speedTestDuration,
+    // 网速测试并发度:并发越高测得越快但单节点读数越低(带宽被平分)
+    @Default(8) int speedTestConcurrency,
     @Default(false) bool showHiddenItems,
     @Default(false) bool hasCustomizedStyle,
   }) = _ProxiesStyle;

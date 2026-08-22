@@ -267,6 +267,8 @@
   "speedTestUrl": "测速下载源",
   "speedTestDuration": "测速时长",
   "speedTestDurationDesc": "每个节点的下载测速时长",
+  "speedTestConcurrency": "网速测试并发",
+  "speedTestConcurrencyDesc": "同时测试的节点数量,越高测完越快但单节点读数越低",
   "speedTestFailed": "测速失败",
   "speedTestCompleted": "测试完成",
   "speedTestTrafficTip": "批量测速将逐个节点下载文件,可能消耗较多流量",

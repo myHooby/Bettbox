@@ -267,6 +267,8 @@
   "speedTestUrl": "測速下載源",
   "speedTestDuration": "測速時長",
   "speedTestDurationDesc": "每個節點的下載測速時長",
+  "speedTestConcurrency": "網速測試並發",
+  "speedTestConcurrencyDesc": "同時測試的節點數量,越高測完越快但單節點讀數越低",
   "speedTestFailed": "測速失敗",
   "speedTestCompleted": "測試完成",
   "speedTestTrafficTip": "批量測速將逐個節點下載檔案,可能消耗較多流量",

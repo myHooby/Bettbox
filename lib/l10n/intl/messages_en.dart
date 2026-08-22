@@ -1070,6 +1070,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "speedTestCompleted": MessageLookupByLibrary.simpleMessage(
       "Test Completed",
     ),
+    "speedTestConcurrency": MessageLookupByLibrary.simpleMessage(
+      "Speed Test Concurrency",
+    ),
+    "speedTestConcurrencyDesc": MessageLookupByLibrary.simpleMessage(
+      "Nodes tested simultaneously; higher is faster but per-node readings drop",
+    ),
     "speedTestDuration": MessageLookupByLibrary.simpleMessage(
       "Speed Test Duration",
     ),

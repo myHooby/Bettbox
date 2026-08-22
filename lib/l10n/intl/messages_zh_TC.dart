@@ -767,6 +767,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "specialRules": MessageLookupByLibrary.simpleMessage("特殊規則"),
     "speedTest": MessageLookupByLibrary.simpleMessage("網速測試"),
     "speedTestCompleted": MessageLookupByLibrary.simpleMessage("測試完成"),
+    "speedTestConcurrency": MessageLookupByLibrary.simpleMessage("網速測試並發"),
+    "speedTestConcurrencyDesc": MessageLookupByLibrary.simpleMessage(
+      "同時測試的節點數量,越高測完越快但單節點讀數越低",
+    ),
     "speedTestDuration": MessageLookupByLibrary.simpleMessage("測速時長"),
     "speedTestDurationDesc": MessageLookupByLibrary.simpleMessage(
       "每個節點的下載測速時長",

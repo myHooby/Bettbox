@@ -234,8 +234,42 @@ class ApplicationSettingView extends StatelessWidget {
       if (system.isAndroid) ...[NavBarHapticFeedbackItem()],
       CloseConnectionsItem(),
       UsageItem(),
+      const SpeedTestConcurrencyItem(),
       AutoCheckUpdateItem(),
     ];
     return generateListView(items);
+  }
+}
+
+// 网速测试并发设置:并发越高整组测完越快,但单节点读数因带宽平分而偏低
+class SpeedTestConcurrencyItem extends ConsumerWidget {
+  const SpeedTestConcurrencyItem({super.key});
+
+  static const _options = [1, 2, 4, 8, 16, 32, 64];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final concurrency = ref.watch(
+      proxiesStyleSettingProvider.select((state) => state.speedTestConcurrency),
+    );
+
+    return ListItem<int>.options(
+      leading: const Icon(Icons.format_list_numbered),
+      title: Text(appLocalizations.speedTestConcurrency),
+      subtitle: Text(appLocalizations.speedTestConcurrencyDesc),
+      delegate: OptionsDelegate(
+        title: appLocalizations.speedTestConcurrency,
+        options: _options,
+        value: concurrency,
+        textBuilder: (value) => '$value',
+        onChanged: (value) {
+          if (value != null) {
+            ref.read(proxiesStyleSettingProvider.notifier).updateState(
+                  (state) => state.copyWith(speedTestConcurrency: value),
+                );
+          }
+        },
+      ),
+    );
   }
 }

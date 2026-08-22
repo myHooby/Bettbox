@@ -267,6 +267,8 @@
   "speedTestUrl": "URL теста скорости",
   "speedTestDuration": "Длительность теста",
   "speedTestDurationDesc": "Длительность загрузочного теста для каждого узла",
+  "speedTestConcurrency": "Параллельность теста скорости",
+  "speedTestConcurrencyDesc": "Число узлов, тестируемых одновременно; чем выше, тем быстрее, но показания по узлам ниже",
   "speedTestFailed": "Тест не удался",
   "speedTestCompleted": "Тест завершён",
   "speedTestTrafficTip": "Групповой тест загружает файлы поочерёдно и может расходовать большой объём трафика",

@@ -291,6 +291,8 @@ _ProxiesStyle _$ProxiesStyleFromJson(Map<String, dynamic> json) =>
       concurrencyLimit: (json['concurrencyLimit'] as num?)?.toInt() ?? 250,
       speedTestUrl: json['speedTestUrl'] as String? ?? defaultSpeedTestUrl,
       speedTestDuration: (json['speedTestDuration'] as num?)?.toInt() ?? 10,
+      speedTestConcurrency:
+          (json['speedTestConcurrency'] as num?)?.toInt() ?? 8,
       showHiddenItems: json['showHiddenItems'] as bool? ?? false,
       hasCustomizedStyle: json['hasCustomizedStyle'] as bool? ?? false,
     );
@@ -307,6 +309,7 @@ Map<String, dynamic> _$ProxiesStyleToJson(_ProxiesStyle instance) =>
       'concurrencyLimit': instance.concurrencyLimit,
       'speedTestUrl': instance.speedTestUrl,
       'speedTestDuration': instance.speedTestDuration,
+      'speedTestConcurrency': instance.speedTestConcurrency,
       'showHiddenItems': instance.showHiddenItems,
       'hasCustomizedStyle': instance.hasCustomizedStyle,
     };

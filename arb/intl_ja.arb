@@ -267,6 +267,8 @@
   "speedTestUrl": "スピードテストURL",
   "speedTestDuration": "テスト時間",
   "speedTestDurationDesc": "ノードごとのダウンロードテスト時間",
+  "speedTestConcurrency": "スピードテスト並行数",
+  "speedTestConcurrencyDesc": "同時にテストするノード数。多いほど速く終わりますが、ノードごとの値は低くなります",
   "speedTestFailed": "テスト失敗",
   "speedTestCompleted": "テスト完了",
   "speedTestTrafficTip": "一括テストはノードごとに順番にダウンロードを行い、大量のデータを消費する可能性があります",
