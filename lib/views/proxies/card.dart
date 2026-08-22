@@ -4,6 +4,7 @@ import 'package:bett_box/models/models.dart';
 import 'package:bett_box/providers/providers.dart';
 import 'package:bett_box/state.dart';
 import 'package:bett_box/views/proxies/common.dart';
+import 'package:bett_box/views/proxies/speed_test.dart';
 import 'package:bett_box/widgets/widgets.dart';
 import 'package:emoji_regex/emoji_regex.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +74,41 @@ class ProxyCard extends StatelessWidget {
     proxyDelayTest(proxy, testUrl);
   }
 
+  // 长按卡片弹出菜单,提供单节点网速测试入口
+  void _handleLongPressMenu(BuildContext context) {
+    if (_isNonTestableProxy) return;
+    showSheet(
+      context: context,
+      props: SheetProps(isScrollControlled: false),
+      builder: (_, type) {
+        return AdaptiveSheetScaffold(
+          type: type,
+          title: proxy.name,
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox(
+              width: double.infinity,
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                runSpacing: 8,
+                spacing: 8,
+                children: [
+                  SettingTextCard(
+                    appLocalizations.speedTest,
+                    onPressed: () {
+                      Navigator.of(context).maybePop();
+                      showProxySpeedTestSheet(context, proxy);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildDelayText(BuildContext context) {
     return SizedBox(
       height: measure.labelSmallHeight,
@@ -124,6 +160,46 @@ class ProxyCard extends StatelessWidget {
               style: context.textTheme.labelSmall?.copyWith(
                 overflow: TextOverflow.ellipsis,
                 color: utils.getDelayColor(delay),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // 网速结果显示:0 表示测试中(加载动画),-1 表示失败,正值展示下载速度
+  Widget _buildSpeedText(BuildContext context) {
+    return SizedBox(
+      height: measure.labelSmallHeight,
+      child: Consumer(
+        builder: (_, ref, _) {
+          if (_isNonTestableProxy) {
+            return const SizedBox(height: 0, width: 0);
+          }
+
+          final speed = ref.watch(getSpeedProvider(proxyName: proxy.name));
+          if (speed == null) {
+            return const SizedBox(height: 0, width: 0);
+          }
+
+          if (speed == 0) {
+            return SizedBox(
+              height: measure.labelSmallHeight,
+              width: measure.labelSmallHeight,
+              child: const CircularProgressIndicator(strokeWidth: 2),
+            );
+          }
+
+          return GestureDetector(
+            onTap: () => showProxySpeedTestSheet(context, proxy),
+            child: Text(
+              speed < 0
+                  ? appLocalizations.speedTestFailed
+                  : '↓${TrafficValue(value: speed.toInt()).shortShow}/s',
+              style: context.textTheme.labelSmall?.copyWith(
+                overflow: TextOverflow.ellipsis,
+                color: utils.getSpeedColor(speed),
               ),
             ),
           );
@@ -271,6 +347,7 @@ class ProxyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final delayText = _buildDelayText(context);
+    final speedText = _buildSpeedText(context);
     return Consumer(
       builder: (_, ref, child) {
         final isSelected = _isSelectedProxy(ref);
@@ -286,6 +363,9 @@ class ProxyCard extends StatelessWidget {
             CommonCard(
               onPressed: () {
                 _changeProxy(ref);
+              },
+              onLongPress: () {
+                _handleLongPressMenu(context);
               },
               isSelected: isSelected,
               child: Container(
@@ -321,6 +401,7 @@ class ProxyCard extends StatelessWidget {
                                       child: _ProxyMetaTag(proxy.type),
                                     ),
                                   ),
+                                  speedText,
                                   delayText,
                                 ],
                               ),
@@ -352,6 +433,7 @@ class ProxyCard extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            speedText,
                             delayText,
                           ],
                         ),

@@ -15,6 +15,7 @@ import '../profiles/scripts.dart'
     show showGroupSwitchOptions, showScriptCustomOptions;
 import 'advanced_settings.dart';
 import 'setting.dart';
+import 'speed_test.dart';
 import 'tab.dart';
 
 class ProxiesView extends ConsumerStatefulWidget {
@@ -169,11 +170,30 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
                 ? getFloatingBottomBarFABReserveHeight(context)
                 : 0,
           ),
-          child: DelayTestButton(
-            groupName: currentGroupName ?? '',
-            onClick: () async {
-              await _proxiesTabKey.currentState?.delayTestCurrentGroup();
+          // 长按延迟测试按钮:对当前组发起串行网速测试
+          child: GestureDetector(
+            onLongPress: () {
+              final tabState = _proxiesTabKey.currentState;
+              final groupName = currentGroupName;
+              if (tabState == null || groupName == null || groupName.isEmpty) {
+                return;
+              }
+              final group = globalState.appController
+                  .getCurrentGroups()
+                  .getGroup(groupName);
+              if (group == null) return;
+              showGroupSpeedTestSheet(
+                context,
+                group.all,
+                groupName: group.name,
+              );
             },
+            child: DelayTestButton(
+              groupName: currentGroupName ?? '',
+              onClick: () async {
+                await _proxiesTabKey.currentState?.delayTestCurrentGroup();
+              },
+            ),
           ),
         );
       },

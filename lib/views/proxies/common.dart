@@ -34,6 +34,47 @@ class DelayTestCoordinator extends ChangeNotifier {
 
 final delayTestCoordinator = DelayTestCoordinator();
 
+// 网速测试全局互斥协调器:带宽测试必须串行独占,任意时刻仅允许一个节点在测
+class SpeedTestCoordinator extends ChangeNotifier {
+  String? _testingGroupName;
+
+  String? _currentProxyName;
+
+  String? get testingGroupName => _testingGroupName;
+
+  // 当前正在测试的节点名,供对话框与进度展示使用
+  String? get currentProxyName => _currentProxyName;
+
+  bool get isTesting => _testingGroupName != null;
+
+  bool isTestingGroup(String groupName) => _testingGroupName == groupName;
+
+  Future<bool> run(String groupName, Future<void> Function() action) async {
+    if (isTesting) {
+      return false;
+    }
+
+    _testingGroupName = groupName;
+    notifyListeners();
+    try {
+      await action();
+      return true;
+    } finally {
+      _testingGroupName = null;
+      _currentProxyName = null;
+      notifyListeners();
+    }
+  }
+
+  void setCurrentProxy(String proxyName) {
+    if (_currentProxyName == proxyName) return;
+    _currentProxyName = proxyName;
+    notifyListeners();
+  }
+}
+
+final speedTestCoordinator = SpeedTestCoordinator();
+
 @immutable
 class DelayTestTarget {
   final String name;
@@ -202,4 +243,74 @@ double getScrollToSelectedOffset({
   final selectedIndex = findSelectedIndex != -1 ? findSelectedIndex : 0;
   final rows = (selectedIndex / columns).floor();
   return rows * getItemHeight(proxyCardType) + (rows - 1) * 8;
+}
+
+// 对单个节点执行网速测试,经协调器互斥,测试期间卡片显示进行中状态
+Future<bool> proxySpeedTest(Proxy proxy) async {
+  if (_isNonTestableProxy(proxy)) return false;
+  final state = globalState.appController.getProxyCardState(proxy.name);
+  if (state.proxyName.isEmpty) return false;
+  return speedTest([proxy], groupName: proxy.name);
+}
+
+Future<bool> _testProxySpeed(String proxyName) async {
+  final appController = globalState.appController;
+  final proxiesStyle = globalState.config.proxiesStyle;
+  speedTestCoordinator.setCurrentProxy(proxyName);
+  // 置 0 表示测试中,与延迟测试的展示约定一致
+  appController.setSpeed(
+    SpeedResult(name: proxyName, url: proxiesStyle.speedTestUrl, speed: 0),
+  );
+  try {
+    final result = await clashCore.getSpeed(
+      proxiesStyle.speedTestUrl,
+      proxyName,
+      proxiesStyle.speedTestDuration * 1000,
+    );
+    appController.setSpeed(result);
+    return result.speed >= 0;
+  } catch (_) {
+    appController.setSpeed(
+      SpeedResult(
+        name: proxyName,
+        url: proxiesStyle.speedTestUrl,
+        speed: -1,
+      ),
+    );
+    return false;
+  }
+}
+
+// 网速测试入口:组内可测节点按实际节点名去重后串行执行(独占带宽保证结果准确)
+Future<bool> speedTest(
+  List<Proxy> proxies, {
+  String? groupName,
+}) async {
+  Future<void> runTest() async {
+    final appController = globalState.appController;
+    final names = <String>{};
+    for (final proxy in proxies) {
+      if (_isNonTestableProxy(proxy)) {
+        continue;
+      }
+      final state = appController.getProxyCardState(proxy.name);
+      final name = state.proxyName;
+      if (name.isEmpty ||
+          _isNonTestableProxyName(name) ||
+          _isNonTestableProxyType(_getProxyType(name) ?? '')) {
+        continue;
+      }
+      names.add(name);
+    }
+    for (final name in names) {
+      await _testProxySpeed(name);
+    }
+  }
+
+  final name = groupName ?? '';
+  if (name.isEmpty) {
+    await runTest();
+    return true;
+  }
+  return speedTestCoordinator.run(name, runTest);
 }

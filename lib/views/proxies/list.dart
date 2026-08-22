@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'card.dart';
 import 'common.dart';
+import 'speed_test.dart';
 
 class ProxiesListView extends ConsumerWidget {
   const ProxiesListView({super.key});
@@ -368,6 +369,31 @@ class _GroupHeader extends ConsumerWidget {
                         ? null
                         : () => _delayTest(context),
                     tooltip: appLocalizations.startTest,
+                  );
+                },
+              ),
+              // 组级网速测试入口:串行测试组内全部节点
+              AnimatedBuilder(
+                animation: speedTestCoordinator,
+                builder: (_, _) {
+                  final isSpeedTestingThisGroup = speedTestCoordinator
+                      .isTestingGroup(group.name);
+                  return IconButton(
+                    visualDensity: VisualDensity.compact,
+                    icon: isSpeedTestingThisGroup
+                        ? const SizedBox.square(
+                            dimension: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.speed),
+                    onPressed: speedTestCoordinator.isTesting
+                        ? null
+                        : () => showGroupSpeedTestSheet(
+                            context,
+                            group.all,
+                            groupName: group.name,
+                          ),
+                    tooltip: appLocalizations.speedTest,
                   );
                 },
               ),
