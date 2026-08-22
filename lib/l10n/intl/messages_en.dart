@@ -1066,6 +1066,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "sourceIp": MessageLookupByLibrary.simpleMessage("Source IP"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Special Proxy"),
     "specialRules": MessageLookupByLibrary.simpleMessage("Special Rules"),
+    "speedTest": MessageLookupByLibrary.simpleMessage("Speed Test"),
+    "speedTestCompleted": MessageLookupByLibrary.simpleMessage(
+      "Test Completed",
+    ),
+    "speedTestDuration": MessageLookupByLibrary.simpleMessage(
+      "Speed Test Duration",
+    ),
+    "speedTestDurationDesc": MessageLookupByLibrary.simpleMessage(
+      "Download test duration per node",
+    ),
+    "speedTestFailed": MessageLookupByLibrary.simpleMessage("Test Failed"),
+    "speedTestTrafficTip": MessageLookupByLibrary.simpleMessage(
+      "Batch speed test downloads files one by one and may consume a lot of data",
+    ),
+    "speedTestUrl": MessageLookupByLibrary.simpleMessage("Speed Test URL"),
     "spinningLines": MessageLookupByLibrary.simpleMessage("Spinning Lines"),
     "stackMode": MessageLookupByLibrary.simpleMessage("Stack Mode"),
     "standard": MessageLookupByLibrary.simpleMessage("Standard"),
@@ -1108,6 +1123,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Allow concurrent TCP connections",
     ),
     "testUrl": MessageLookupByLibrary.simpleMessage("Test URL"),
+    "testing": MessageLookupByLibrary.simpleMessage("Testing"),
     "textScale": MessageLookupByLibrary.simpleMessage("Text Scaling"),
     "theme": MessageLookupByLibrary.simpleMessage("Theme"),
     "themeColor": MessageLookupByLibrary.simpleMessage("Theme Color"),

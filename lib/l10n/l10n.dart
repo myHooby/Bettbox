@@ -2184,6 +2184,76 @@ class AppLocalizations {
     return Intl.message('Delay Test', name: 'startTest', desc: '', args: []);
   }
 
+  /// `Speed Test`
+  String get speedTest {
+    return Intl.message('Speed Test', name: 'speedTest', desc: '', args: []);
+  }
+
+  /// `Speed Test URL`
+  String get speedTestUrl {
+    return Intl.message(
+      'Speed Test URL',
+      name: 'speedTestUrl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Speed Test Duration`
+  String get speedTestDuration {
+    return Intl.message(
+      'Speed Test Duration',
+      name: 'speedTestDuration',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download test duration per node`
+  String get speedTestDurationDesc {
+    return Intl.message(
+      'Download test duration per node',
+      name: 'speedTestDurationDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test Failed`
+  String get speedTestFailed {
+    return Intl.message(
+      'Test Failed',
+      name: 'speedTestFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test Completed`
+  String get speedTestCompleted {
+    return Intl.message(
+      'Test Completed',
+      name: 'speedTestCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Batch speed test downloads files one by one and may consume a lot of data`
+  String get speedTestTrafficTip {
+    return Intl.message(
+      'Batch speed test downloads files one by one and may consume a lot of data',
+      name: 'speedTestTrafficTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Testing`
+  String get testing {
+    return Intl.message('Testing', name: 'testing', desc: '', args: []);
+  }
+
   /// `Add Profile`
   String get addProfile {
     return Intl.message('Add Profile', name: 'addProfile', desc: '', args: []);

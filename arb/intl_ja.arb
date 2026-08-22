@@ -263,6 +263,14 @@
   "paste": "貼り付け",
   "testUrl": "テストURL",
   "startTest": "レイテンシテスト",
+  "speedTest": "スピードテスト",
+  "speedTestUrl": "スピードテストURL",
+  "speedTestDuration": "テスト時間",
+  "speedTestDurationDesc": "ノードごとのダウンロードテスト時間",
+  "speedTestFailed": "テスト失敗",
+  "speedTestCompleted": "テスト完了",
+  "speedTestTrafficTip": "一括テストはノードごとに順番にダウンロードを行い、大量のデータを消費する可能性があります",
+  "testing": "テスト中",
   "addProfile": "プロファイル追加",
   "customUrl": "カスタムURL",
   "sync": "同期",
@@ -671,6 +679,5 @@
   "export": "エクスポート",
   "clear": "消去",
   "back": "戻る",
-  "closeAll": "すべて閉じる",
-  "script": "スクリプト"
+  "closeAll": "すべて閉じる"
 }

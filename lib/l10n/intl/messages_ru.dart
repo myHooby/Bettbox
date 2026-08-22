@@ -1079,6 +1079,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "sourceIp": MessageLookupByLibrary.simpleMessage("IP источника"),
     "specialProxy": MessageLookupByLibrary.simpleMessage("Специальный прокси"),
     "specialRules": MessageLookupByLibrary.simpleMessage("Специальные правила"),
+    "speedTest": MessageLookupByLibrary.simpleMessage("Тест скорости"),
+    "speedTestCompleted": MessageLookupByLibrary.simpleMessage("Тест завершён"),
+    "speedTestDuration": MessageLookupByLibrary.simpleMessage(
+      "Длительность теста",
+    ),
+    "speedTestDurationDesc": MessageLookupByLibrary.simpleMessage(
+      "Длительность загрузочного теста для каждого узла",
+    ),
+    "speedTestFailed": MessageLookupByLibrary.simpleMessage("Тест не удался"),
+    "speedTestTrafficTip": MessageLookupByLibrary.simpleMessage(
+      "Групповой тест загружает файлы поочерёдно и может расходовать большой объём трафика",
+    ),
+    "speedTestUrl": MessageLookupByLibrary.simpleMessage("URL теста скорости"),
     "spinningLines": MessageLookupByLibrary.simpleMessage("Вращающиеся линии"),
     "stackMode": MessageLookupByLibrary.simpleMessage("Режим стека"),
     "standard": MessageLookupByLibrary.simpleMessage("Стандарт"),
@@ -1125,6 +1138,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Разрешить параллельные TCP-соединения",
     ),
     "testUrl": MessageLookupByLibrary.simpleMessage("URL теста"),
+    "testing": MessageLookupByLibrary.simpleMessage("Тестирование"),
     "textScale": MessageLookupByLibrary.simpleMessage("Масштаб текста"),
     "theme": MessageLookupByLibrary.simpleMessage("Тема"),
     "themeColor": MessageLookupByLibrary.simpleMessage("Цвет темы"),

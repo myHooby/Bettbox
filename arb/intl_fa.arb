@@ -263,6 +263,14 @@
   "paste": "جایگذاری",
   "testUrl": "آدرس تست",
   "startTest": "تست تاخیر",
+  "speedTest": "تست سرعت",
+  "speedTestUrl": "آدرس تست سرعت",
+  "speedTestDuration": "مدت تست",
+  "speedTestDurationDesc": "مدت تست دانلود برای هر گره",
+  "speedTestFailed": "تست ناموفق بود",
+  "speedTestCompleted": "تست کامل شد",
+  "speedTestTrafficTip": "تست گروهی فایل‌ها را یکی‌یکی دانلود می‌کند و ممکن است حجم زیادی از داده مصرف کند",
+  "testing": "در حال تست",
   "addProfile": "افزودن پروفایل",
   "customUrl": "آدرس URL سفارشی",
   "sync": "همگام‌سازی",
@@ -671,6 +679,5 @@
   "export": "خروجی",
   "clear": "پاک کردن",
   "back": "بازگشت",
-  "closeAll": "بستن همه",
-  "script": "اسکریپت"
+  "closeAll": "بستن همه"
 }

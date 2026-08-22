@@ -263,6 +263,14 @@
   "paste": "Paste",
   "testUrl": "Test URL",
   "startTest": "Delay Test",
+  "speedTest": "Speed Test",
+  "speedTestUrl": "Speed Test URL",
+  "speedTestDuration": "Speed Test Duration",
+  "speedTestDurationDesc": "Download test duration per node",
+  "speedTestFailed": "Test Failed",
+  "speedTestCompleted": "Test Completed",
+  "speedTestTrafficTip": "Batch speed test downloads files one by one and may consume a lot of data",
+  "testing": "Testing",
   "addProfile": "Add Profile",
   "customUrl": "Custom URL",
   "sync": "Sync",
@@ -670,6 +678,5 @@
   "export": "Export",
   "clear": "Clear",
   "back": "Back",
-  "closeAll": "Close All",
-  "script": "Script"
+  "closeAll": "Close All"
 }
