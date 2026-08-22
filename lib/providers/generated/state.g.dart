@@ -1028,6 +1028,120 @@ class _GetDelayProviderElement extends AutoDisposeProviderElement<int?>
   String? get testUrl => (origin as GetDelayProvider).testUrl;
 }
 
+String _$getSpeedHash() => r'b208b5a4b7a46b760e8476d870e5b36986b92c03';
+
+/// See also [getSpeed].
+@ProviderFor(getSpeed)
+const getSpeedProvider = GetSpeedFamily();
+
+/// See also [getSpeed].
+class GetSpeedFamily extends Family<double?> {
+  /// See also [getSpeed].
+  const GetSpeedFamily();
+
+  /// See also [getSpeed].
+  GetSpeedProvider call({required String proxyName}) {
+    return GetSpeedProvider(proxyName: proxyName);
+  }
+
+  @override
+  GetSpeedProvider getProviderOverride(covariant GetSpeedProvider provider) {
+    return call(proxyName: provider.proxyName);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getSpeedProvider';
+}
+
+/// See also [getSpeed].
+class GetSpeedProvider extends AutoDisposeProvider<double?> {
+  /// See also [getSpeed].
+  GetSpeedProvider({required String proxyName})
+    : this._internal(
+        (ref) => getSpeed(ref as GetSpeedRef, proxyName: proxyName),
+        from: getSpeedProvider,
+        name: r'getSpeedProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getSpeedHash,
+        dependencies: GetSpeedFamily._dependencies,
+        allTransitiveDependencies: GetSpeedFamily._allTransitiveDependencies,
+        proxyName: proxyName,
+      );
+
+  GetSpeedProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.proxyName,
+  }) : super.internal();
+
+  final String proxyName;
+
+  @override
+  Override overrideWith(double? Function(GetSpeedRef provider) create) {
+    return ProviderOverride(
+      origin: this,
+      override: GetSpeedProvider._internal(
+        (ref) => create(ref as GetSpeedRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        proxyName: proxyName,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<double?> createElement() {
+    return _GetSpeedProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetSpeedProvider && other.proxyName == proxyName;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, proxyName.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin GetSpeedRef on AutoDisposeProviderRef<double?> {
+  /// The parameter `proxyName` of this provider.
+  String get proxyName;
+}
+
+class _GetSpeedProviderElement extends AutoDisposeProviderElement<double?>
+    with GetSpeedRef {
+  _GetSpeedProviderElement(super.provider);
+
+  @override
+  String get proxyName => (origin as GetSpeedProvider).proxyName;
+}
+
 String _$selectedMapHash() => r'0d7a3610d9005e74e1a88595d7e22897dc8240a5';
 
 /// See also [selectedMap].

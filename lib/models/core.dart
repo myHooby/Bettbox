@@ -12,6 +12,8 @@ abstract mixin class AppMessageListener {
 
   void onDelay(Delay delay) {}
 
+  void onSpeedTest(SpeedTestProgress progress) {}
+
   void onRequest(TrackerInfo connection) {}
 
   void onLoaded(String providerName) {}
@@ -157,6 +159,36 @@ abstract class Delay with _$Delay {
       _Delay;
 
   factory Delay.fromJson(Map<String, Object?> json) => _$DelayFromJson(json);
+}
+
+// 网速测试最终结果:speed 为平均下载速度(字节/秒),失败时为 -1
+@freezed
+abstract class SpeedResult with _$SpeedResult {
+  const factory SpeedResult({
+    required String name,
+    required String url,
+    @Default(0) double speed,
+    @Default(0) int bytes,
+    @Default(0) int duration,
+  }) = _SpeedResult;
+
+  factory SpeedResult.fromJson(Map<String, Object?> json) =>
+      _$SpeedResultFromJson(json);
+}
+
+// 网速测试实时进度:由内核消息通道推送
+@freezed
+abstract class SpeedTestProgress with _$SpeedTestProgress {
+  const factory SpeedTestProgress({
+    required String name,
+    required String url,
+    @Default(0) double speed,
+    @Default(0) int bytes,
+    @Default(0) int elapsed,
+  }) = _SpeedTestProgress;
+
+  factory SpeedTestProgress.fromJson(Map<String, Object?> json) =>
+      _$SpeedTestProgressFromJson(json);
 }
 
 @freezed

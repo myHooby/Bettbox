@@ -131,7 +131,7 @@ enum ResultType {
   error,
 }
 
-enum AppMessageType { log, delay, request, loaded }
+enum AppMessageType { log, delay, speedTest, request, loaded }
 
 enum InvokeMessageType { protect, process }
 
@@ -234,6 +234,7 @@ enum ActionMethod {
   getTotalTraffic,
   resetTraffic,
   asyncTestDelay,
+  asyncSpeedTest,
   getConnections,
   closeConnections,
   resetConnections,

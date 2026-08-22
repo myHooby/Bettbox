@@ -518,6 +518,15 @@ int? getDelay(Ref ref, {required String proxyName, String? testUrl}) {
   return delay;
 }
 
+// 读取节点网速测试结果:0 表示测试中,-1 表示失败,正值单位为字节/秒
+@riverpod
+double? getSpeed(Ref ref, {required String proxyName}) {
+  final proxyCardState = ref.watch(getProxyCardStateProvider(proxyName));
+  return ref.watch(
+    speedDataSourceProvider.select((state) => state[proxyCardState.proxyName]),
+  );
+}
+
 @riverpod
 SelectedMap selectedMap(Ref ref) {
   final selectedMap = ref.watch(

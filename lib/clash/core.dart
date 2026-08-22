@@ -267,6 +267,23 @@ class ClashCore {
     }
   }
 
+  Future<SpeedResult> getSpeed(
+    String url,
+    String proxyName,
+    int timeoutMs,
+  ) async {
+    final data = await clashInterface.asyncSpeedTest(url, proxyName, timeoutMs);
+    if (data.isEmpty) {
+      throw Exception('Empty speed test response');
+    }
+    try {
+      return SpeedResult.fromJson(json.decode(data));
+    } catch (e) {
+      commonPrint.log('Failed to parse speed test result: $e');
+      rethrow;
+    }
+  }
+
   Future<Map<String, dynamic>> getConfig(String id, {String? ageSecretKey}) async {
     final profilePath = await appPath.getProfilePath(id);
     final res = await clashInterface.getConfig(profilePath, ageSecretKey: ageSecretKey);

@@ -71,6 +71,15 @@ double getFloatingBottomBarFABReserveHeight(BuildContext context) {
 
 const defaultTestUrl = 'https://www.apple.com/library/test/success.html';
 
+// 网速测试默认下载源(Cloudflare),预设列表供设置界面选用
+const defaultSpeedTestUrl =
+    'https://speed.cloudflare.com/__down?bytes=104857600';
+
+const presetSpeedTestUrls = [
+  'https://speed.cloudflare.com/__down?bytes=104857600',
+  'https://speed.cloudflare.com/__down?bytes=10485760',
+];
+
 // Preset test URLs
 const presetTestUrls = [
   'https://g.cn/generate_204',

@@ -279,6 +279,8 @@ abstract class ProxiesStyle with _$ProxiesStyle {
     @Default(DelayAnimationType.none) DelayAnimationType delayAnimation,
     @Default({}) Map<String, String> iconMap,
     @Default(250) int concurrencyLimit,
+    @Default(defaultSpeedTestUrl) String speedTestUrl,
+    @Default(10) int speedTestDuration,
     @Default(false) bool showHiddenItems,
     @Default(false) bool hasCustomizedStyle,
   }) = _ProxiesStyle;

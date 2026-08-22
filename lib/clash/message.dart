@@ -17,6 +17,8 @@ class ClashMessage {
             listener.onLog(Log.fromJson(m.data));
           case AppMessageType.delay:
             listener.onDelay(Delay.fromJson(m.data));
+          case AppMessageType.speedTest:
+            listener.onSpeedTest(SpeedTestProgress.fromJson(m.data));
           case AppMessageType.request:
             listener.onRequest(TrackerInfo.fromJson(m.data));
           case AppMessageType.loaded:

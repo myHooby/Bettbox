@@ -2832,6 +2832,556 @@ as int?,
 
 
 /// @nodoc
+mixin _$SpeedResult {
+
+ String get name; String get url; double get speed; int get bytes; int get duration;
+/// Create a copy of SpeedResult
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SpeedResultCopyWith<SpeedResult> get copyWith => _$SpeedResultCopyWithImpl<SpeedResult>(this as SpeedResult, _$identity);
+
+  /// Serializes this SpeedResult to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpeedResult&&(identical(other.name, name) || other.name == name)&&(identical(other.url, url) || other.url == url)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.bytes, bytes) || other.bytes == bytes)&&(identical(other.duration, duration) || other.duration == duration));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,name,url,speed,bytes,duration);
+
+@override
+String toString() {
+  return 'SpeedResult(name: $name, url: $url, speed: $speed, bytes: $bytes, duration: $duration)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SpeedResultCopyWith<$Res>  {
+  factory $SpeedResultCopyWith(SpeedResult value, $Res Function(SpeedResult) _then) = _$SpeedResultCopyWithImpl;
+@useResult
+$Res call({
+ String name, String url, double speed, int bytes, int duration
+});
+
+
+
+
+}
+/// @nodoc
+class _$SpeedResultCopyWithImpl<$Res>
+    implements $SpeedResultCopyWith<$Res> {
+  _$SpeedResultCopyWithImpl(this._self, this._then);
+
+  final SpeedResult _self;
+  final $Res Function(SpeedResult) _then;
+
+/// Create a copy of SpeedResult
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? url = null,Object? speed = null,Object? bytes = null,Object? duration = null,}) {
+  return _then(_self.copyWith(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,speed: null == speed ? _self.speed : speed // ignore: cast_nullable_to_non_nullable
+as double,bytes: null == bytes ? _self.bytes : bytes // ignore: cast_nullable_to_non_nullable
+as int,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [SpeedResult].
+extension SpeedResultPatterns on SpeedResult {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SpeedResult value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SpeedResult() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SpeedResult value)  $default,){
+final _that = this;
+switch (_that) {
+case _SpeedResult():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SpeedResult value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SpeedResult() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String url,  double speed,  int bytes,  int duration)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SpeedResult() when $default != null:
+return $default(_that.name,_that.url,_that.speed,_that.bytes,_that.duration);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String url,  double speed,  int bytes,  int duration)  $default,) {final _that = this;
+switch (_that) {
+case _SpeedResult():
+return $default(_that.name,_that.url,_that.speed,_that.bytes,_that.duration);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String url,  double speed,  int bytes,  int duration)?  $default,) {final _that = this;
+switch (_that) {
+case _SpeedResult() when $default != null:
+return $default(_that.name,_that.url,_that.speed,_that.bytes,_that.duration);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _SpeedResult implements SpeedResult {
+  const _SpeedResult({required this.name, required this.url, this.speed = 0, this.bytes = 0, this.duration = 0});
+  factory _SpeedResult.fromJson(Map<String, dynamic> json) => _$SpeedResultFromJson(json);
+
+@override final  String name;
+@override final  String url;
+@override@JsonKey() final  double speed;
+@override@JsonKey() final  int bytes;
+@override@JsonKey() final  int duration;
+
+/// Create a copy of SpeedResult
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SpeedResultCopyWith<_SpeedResult> get copyWith => __$SpeedResultCopyWithImpl<_SpeedResult>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$SpeedResultToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpeedResult&&(identical(other.name, name) || other.name == name)&&(identical(other.url, url) || other.url == url)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.bytes, bytes) || other.bytes == bytes)&&(identical(other.duration, duration) || other.duration == duration));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,name,url,speed,bytes,duration);
+
+@override
+String toString() {
+  return 'SpeedResult(name: $name, url: $url, speed: $speed, bytes: $bytes, duration: $duration)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SpeedResultCopyWith<$Res> implements $SpeedResultCopyWith<$Res> {
+  factory _$SpeedResultCopyWith(_SpeedResult value, $Res Function(_SpeedResult) _then) = __$SpeedResultCopyWithImpl;
+@override @useResult
+$Res call({
+ String name, String url, double speed, int bytes, int duration
+});
+
+
+
+
+}
+/// @nodoc
+class __$SpeedResultCopyWithImpl<$Res>
+    implements _$SpeedResultCopyWith<$Res> {
+  __$SpeedResultCopyWithImpl(this._self, this._then);
+
+  final _SpeedResult _self;
+  final $Res Function(_SpeedResult) _then;
+
+/// Create a copy of SpeedResult
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? url = null,Object? speed = null,Object? bytes = null,Object? duration = null,}) {
+  return _then(_SpeedResult(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,speed: null == speed ? _self.speed : speed // ignore: cast_nullable_to_non_nullable
+as double,bytes: null == bytes ? _self.bytes : bytes // ignore: cast_nullable_to_non_nullable
+as int,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$SpeedTestProgress {
+
+ String get name; String get url; double get speed; int get bytes; int get elapsed;
+/// Create a copy of SpeedTestProgress
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SpeedTestProgressCopyWith<SpeedTestProgress> get copyWith => _$SpeedTestProgressCopyWithImpl<SpeedTestProgress>(this as SpeedTestProgress, _$identity);
+
+  /// Serializes this SpeedTestProgress to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpeedTestProgress&&(identical(other.name, name) || other.name == name)&&(identical(other.url, url) || other.url == url)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.bytes, bytes) || other.bytes == bytes)&&(identical(other.elapsed, elapsed) || other.elapsed == elapsed));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,name,url,speed,bytes,elapsed);
+
+@override
+String toString() {
+  return 'SpeedTestProgress(name: $name, url: $url, speed: $speed, bytes: $bytes, elapsed: $elapsed)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SpeedTestProgressCopyWith<$Res>  {
+  factory $SpeedTestProgressCopyWith(SpeedTestProgress value, $Res Function(SpeedTestProgress) _then) = _$SpeedTestProgressCopyWithImpl;
+@useResult
+$Res call({
+ String name, String url, double speed, int bytes, int elapsed
+});
+
+
+
+
+}
+/// @nodoc
+class _$SpeedTestProgressCopyWithImpl<$Res>
+    implements $SpeedTestProgressCopyWith<$Res> {
+  _$SpeedTestProgressCopyWithImpl(this._self, this._then);
+
+  final SpeedTestProgress _self;
+  final $Res Function(SpeedTestProgress) _then;
+
+/// Create a copy of SpeedTestProgress
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? url = null,Object? speed = null,Object? bytes = null,Object? elapsed = null,}) {
+  return _then(_self.copyWith(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,speed: null == speed ? _self.speed : speed // ignore: cast_nullable_to_non_nullable
+as double,bytes: null == bytes ? _self.bytes : bytes // ignore: cast_nullable_to_non_nullable
+as int,elapsed: null == elapsed ? _self.elapsed : elapsed // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [SpeedTestProgress].
+extension SpeedTestProgressPatterns on SpeedTestProgress {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SpeedTestProgress value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SpeedTestProgress() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SpeedTestProgress value)  $default,){
+final _that = this;
+switch (_that) {
+case _SpeedTestProgress():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SpeedTestProgress value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SpeedTestProgress() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String url,  double speed,  int bytes,  int elapsed)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SpeedTestProgress() when $default != null:
+return $default(_that.name,_that.url,_that.speed,_that.bytes,_that.elapsed);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String url,  double speed,  int bytes,  int elapsed)  $default,) {final _that = this;
+switch (_that) {
+case _SpeedTestProgress():
+return $default(_that.name,_that.url,_that.speed,_that.bytes,_that.elapsed);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String url,  double speed,  int bytes,  int elapsed)?  $default,) {final _that = this;
+switch (_that) {
+case _SpeedTestProgress() when $default != null:
+return $default(_that.name,_that.url,_that.speed,_that.bytes,_that.elapsed);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _SpeedTestProgress implements SpeedTestProgress {
+  const _SpeedTestProgress({required this.name, required this.url, this.speed = 0, this.bytes = 0, this.elapsed = 0});
+  factory _SpeedTestProgress.fromJson(Map<String, dynamic> json) => _$SpeedTestProgressFromJson(json);
+
+@override final  String name;
+@override final  String url;
+@override@JsonKey() final  double speed;
+@override@JsonKey() final  int bytes;
+@override@JsonKey() final  int elapsed;
+
+/// Create a copy of SpeedTestProgress
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SpeedTestProgressCopyWith<_SpeedTestProgress> get copyWith => __$SpeedTestProgressCopyWithImpl<_SpeedTestProgress>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$SpeedTestProgressToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpeedTestProgress&&(identical(other.name, name) || other.name == name)&&(identical(other.url, url) || other.url == url)&&(identical(other.speed, speed) || other.speed == speed)&&(identical(other.bytes, bytes) || other.bytes == bytes)&&(identical(other.elapsed, elapsed) || other.elapsed == elapsed));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,name,url,speed,bytes,elapsed);
+
+@override
+String toString() {
+  return 'SpeedTestProgress(name: $name, url: $url, speed: $speed, bytes: $bytes, elapsed: $elapsed)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SpeedTestProgressCopyWith<$Res> implements $SpeedTestProgressCopyWith<$Res> {
+  factory _$SpeedTestProgressCopyWith(_SpeedTestProgress value, $Res Function(_SpeedTestProgress) _then) = __$SpeedTestProgressCopyWithImpl;
+@override @useResult
+$Res call({
+ String name, String url, double speed, int bytes, int elapsed
+});
+
+
+
+
+}
+/// @nodoc
+class __$SpeedTestProgressCopyWithImpl<$Res>
+    implements _$SpeedTestProgressCopyWith<$Res> {
+  __$SpeedTestProgressCopyWithImpl(this._self, this._then);
+
+  final _SpeedTestProgress _self;
+  final $Res Function(_SpeedTestProgress) _then;
+
+/// Create a copy of SpeedTestProgress
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? url = null,Object? speed = null,Object? bytes = null,Object? elapsed = null,}) {
+  return _then(_SpeedTestProgress(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,speed: null == speed ? _self.speed : speed // ignore: cast_nullable_to_non_nullable
+as double,bytes: null == bytes ? _self.bytes : bytes // ignore: cast_nullable_to_non_nullable
+as int,elapsed: null == elapsed ? _self.elapsed : elapsed // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$Now {
 
  String get name; String get value;

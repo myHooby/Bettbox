@@ -191,6 +191,7 @@ Map<String, dynamic> _$AppMessageToJson(_AppMessage instance) =>
 const _$AppMessageTypeEnumMap = {
   AppMessageType.log: 'log',
   AppMessageType.delay: 'delay',
+  AppMessageType.speedTest: 'speedTest',
   AppMessageType.request: 'request',
   AppMessageType.loaded: 'loaded',
 };
@@ -223,6 +224,41 @@ Map<String, dynamic> _$DelayToJson(_Delay instance) => <String, dynamic>{
   'url': instance.url,
   'value': instance.value,
 };
+
+_SpeedResult _$SpeedResultFromJson(Map<String, dynamic> json) => _SpeedResult(
+  name: json['name'] as String,
+  url: json['url'] as String,
+  speed: (json['speed'] as num?)?.toDouble() ?? 0,
+  bytes: (json['bytes'] as num?)?.toInt() ?? 0,
+  duration: (json['duration'] as num?)?.toInt() ?? 0,
+);
+
+Map<String, dynamic> _$SpeedResultToJson(_SpeedResult instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'url': instance.url,
+      'speed': instance.speed,
+      'bytes': instance.bytes,
+      'duration': instance.duration,
+    };
+
+_SpeedTestProgress _$SpeedTestProgressFromJson(Map<String, dynamic> json) =>
+    _SpeedTestProgress(
+      name: json['name'] as String,
+      url: json['url'] as String,
+      speed: (json['speed'] as num?)?.toDouble() ?? 0,
+      bytes: (json['bytes'] as num?)?.toInt() ?? 0,
+      elapsed: (json['elapsed'] as num?)?.toInt() ?? 0,
+    );
+
+Map<String, dynamic> _$SpeedTestProgressToJson(_SpeedTestProgress instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'url': instance.url,
+      'speed': instance.speed,
+      'bytes': instance.bytes,
+      'elapsed': instance.elapsed,
+    };
 
 _Now _$NowFromJson(Map<String, dynamic> json) =>
     _Now(name: json['name'] as String, value: json['value'] as String);
@@ -305,6 +341,7 @@ const _$ActionMethodEnumMap = {
   ActionMethod.getTotalTraffic: 'getTotalTraffic',
   ActionMethod.resetTraffic: 'resetTraffic',
   ActionMethod.asyncTestDelay: 'asyncTestDelay',
+  ActionMethod.asyncSpeedTest: 'asyncSpeedTest',
   ActionMethod.getConnections: 'getConnections',
   ActionMethod.closeConnections: 'closeConnections',
   ActionMethod.resetConnections: 'resetConnections',

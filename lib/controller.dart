@@ -646,6 +646,7 @@ class AppController {
   Future<void> _applyProfile() async {
     _invalidateCoreReads();
     _ref.read(delayDataSourceProvider.notifier).value = {};
+    _ref.read(speedDataSourceProvider.notifier).value = {};
     unawaited(clashCore.requestGc());
     final configured = await _setupCoreConfig();
     if (!configured) return;
@@ -1374,6 +1375,10 @@ class AppController {
 
   void setDelay(Delay delay) {
     _ref.read(delayDataSourceProvider.notifier).setDelay(delay);
+  }
+
+  void setSpeed(SpeedResult result) {
+    _ref.read(speedDataSourceProvider.notifier).setSpeed(result);
   }
 
   int? getTrayProxyDelay({required String proxyName, String? testUrl}) {

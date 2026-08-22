@@ -423,6 +423,27 @@ class DelayDataSource extends _$DelayDataSource with AutoDisposeNotifierMixin {
 }
 
 @riverpod
+class SpeedDataSource extends _$SpeedDataSource with AutoDisposeNotifierMixin {
+  @override
+  SpeedMap build() {
+    return globalState.appState.speedMap;
+  }
+
+  @override
+  onUpdate(value) {
+    globalState.appState = globalState.appState.copyWith(speedMap: value);
+  }
+
+  void setSpeed(SpeedResult result) {
+    if (state[result.name] != result.speed) {
+      final SpeedMap newSpeedMap = Map.from(state);
+      newSpeedMap[result.name] = result.speed;
+      state = newSpeedMap;
+    }
+  }
+}
+
+@riverpod
 class SystemUiOverlayStyleState extends _$SystemUiOverlayStyleState
     with AutoDisposeNotifierMixin {
   @override

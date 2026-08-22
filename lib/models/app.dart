@@ -10,6 +10,9 @@ part 'generated/app.freezed.dart';
 
 typedef DelayMap = Map<String, Map<String, int?>>;
 
+// 按实际节点名记录网速测试结果(字节/秒),0 表示测试中,-1 表示失败
+typedef SpeedMap = Map<String, double?>;
+
 @freezed
 abstract class AppState with _$AppState {
   const factory AppState({
@@ -20,6 +23,7 @@ abstract class AppState with _$AppState {
     @Default(0) int sortNum,
     required Size viewSize,
     @Default({}) DelayMap delayMap,
+    @Default({}) SpeedMap speedMap,
     @Default([]) List<Group> groups,
     @Default(0) int checkIpNum,
     required Brightness brightness,

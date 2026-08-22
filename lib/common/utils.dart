@@ -19,6 +19,15 @@ class Utils {
     return const Color(0xFFC57F0A);
   }
 
+  // 网速结果分档着色:负值为失败,按下载速度粗分三档
+  Color? getSpeedColor(double? speed) {
+    if (speed == null) return null;
+    if (speed < 0) return Colors.red;
+    // 低于 1MB/s 视为较慢
+    if (speed < pow(1024, 2)) return const Color(0xFFC57F0A);
+    return Colors.green;
+  }
+
   String get id {
     final timestamp = DateTime.now().microsecondsSinceEpoch;
     final random = Random();

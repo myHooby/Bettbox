@@ -289,6 +289,8 @@ _ProxiesStyle _$ProxiesStyleFromJson(Map<String, dynamic> json) =>
           ) ??
           const {},
       concurrencyLimit: (json['concurrencyLimit'] as num?)?.toInt() ?? 250,
+      speedTestUrl: json['speedTestUrl'] as String? ?? defaultSpeedTestUrl,
+      speedTestDuration: (json['speedTestDuration'] as num?)?.toInt() ?? 10,
       showHiddenItems: json['showHiddenItems'] as bool? ?? false,
       hasCustomizedStyle: json['hasCustomizedStyle'] as bool? ?? false,
     );
@@ -303,6 +305,8 @@ Map<String, dynamic> _$ProxiesStyleToJson(_ProxiesStyle instance) =>
       'delayAnimation': _$DelayAnimationTypeEnumMap[instance.delayAnimation]!,
       'iconMap': instance.iconMap,
       'concurrencyLimit': instance.concurrencyLimit,
+      'speedTestUrl': instance.speedTestUrl,
+      'speedTestDuration': instance.speedTestDuration,
       'showHiddenItems': instance.showHiddenItems,
       'hasCustomizedStyle': instance.hasCustomizedStyle,
     };

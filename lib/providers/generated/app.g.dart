@@ -385,6 +385,22 @@ final delayDataSourceProvider =
     );
 
 typedef _$DelayDataSource = AutoDisposeNotifier<DelayMap>;
+String _$speedDataSourceHash() => r'69e7f603094db78a96e71ee9855c110de4959511';
+
+/// See also [SpeedDataSource].
+@ProviderFor(SpeedDataSource)
+final speedDataSourceProvider =
+    AutoDisposeNotifierProvider<SpeedDataSource, SpeedMap>.internal(
+      SpeedDataSource.new,
+      name: r'speedDataSourceProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$speedDataSourceHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+typedef _$SpeedDataSource = AutoDisposeNotifier<SpeedMap>;
 String _$systemUiOverlayStyleStateHash() =>
     r'4420d92227ae617ce685c8943dda64f29f57d5d1';
 
