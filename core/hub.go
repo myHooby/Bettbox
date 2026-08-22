@@ -396,13 +396,6 @@ func handleAsyncSpeedTest(paramsString string, fn func(string)) {
 			_ = instance.Close()
 		}()
 
-		req, err := http.NewRequest(http.MethodGet, params.TestUrl, nil)
-		if err != nil {
-			finishWith(-1, 0, 0)
-			return false, nil
-		}
-		req = req.WithContext(ctx)
-
 		tlsConfig, err := ca.GetTLSConfig(ca.Option{})
 		if err != nil {
 			finishWith(-1, 0, 0)
@@ -423,25 +416,8 @@ func handleAsyncSpeedTest(paramsString string, fn func(string)) {
 
 		client := http.Client{
 			Transport: transport,
-			CheckRedirect: func(req *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
 		}
 		defer client.CloseIdleConnections()
-
-		resp, err := client.Do(req)
-		if err != nil {
-			finishWith(-1, 0, 0)
-			return false, nil
-		}
-		defer func() {
-			_ = resp.Body.Close()
-		}()
-
-		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-			finishWith(-1, 0, 0)
-			return false, nil
-		}
 
 		start := time.Now()
 		counter := &speedTestCounter{
@@ -450,8 +426,30 @@ func handleAsyncSpeedTest(paramsString string, fn func(string)) {
 			start:      start,
 			lastReport: start,
 		}
-		// ctx 超时(即测试时长)或下载结束时 Copy 返回,已统计字节数不受影响
-		_, _ = io.Copy(counter, resp.Body)
+		// 分轮循环下载直到测试时长结束:下载源可能限制单次响应字节数(实测 Cloudflare
+		// __down 对 100MB 请求经代理返回 403),小文件提前 EOF 后发起下一轮继续累计,
+		// 保证任何尺寸限制的下载源都能测满整个时长
+		for time.Since(start) < time.Millisecond*time.Duration(params.Timeout) {
+			roundReq, err := http.NewRequest(http.MethodGet, params.TestUrl, nil)
+			if err != nil {
+				break
+			}
+			roundReq = roundReq.WithContext(ctx)
+			roundReq.Header.Set("User-Agent", "Bettbox/1.0 SpeedTest")
+
+			resp, err := client.Do(roundReq)
+			if err != nil {
+				// ctx 到期或连接中断:已有累计字节则按已完成部分结算
+				break
+			}
+			if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+				_ = resp.Body.Close()
+				// 首轮即异常按失败结算;后续轮次异常但已有数据则按已完成部分结算
+				break
+			}
+			_, _ = io.Copy(counter, resp.Body)
+			_ = resp.Body.Close()
+		}
 
 		elapsed := time.Since(start)
 		if elapsed <= 0 || counter.total <= 0 {

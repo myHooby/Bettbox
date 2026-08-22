@@ -71,13 +71,14 @@ double getFloatingBottomBarFABReserveHeight(BuildContext context) {
 
 const defaultTestUrl = 'https://www.apple.com/library/test/success.html';
 
-// 网速测试默认下载源(Cloudflare),预设列表供设置界面选用
+// 网速测试默认下载源(Cloudflare)。单次请求不宜过大:实测经代理节点下载 100MB
+// 会被 Cloudflare 拦截(403),10MB 可稳定通过;时长不足时内核会分轮继续下载累计
 const defaultSpeedTestUrl =
-    'https://speed.cloudflare.com/__down?bytes=104857600';
+    'https://speed.cloudflare.com/__down?bytes=10485760';
 
 const presetSpeedTestUrls = [
-  'https://speed.cloudflare.com/__down?bytes=104857600',
   'https://speed.cloudflare.com/__down?bytes=10485760',
+  'https://speed.cloudflare.com/__down?bytes=1048576',
 ];
 
 // Preset test URLs
