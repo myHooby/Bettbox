@@ -1585,6 +1585,18 @@ class AppController {
     });
   }
 
+  // 网速排序权重:未测(null)与失败(-1)沉底,测试中(0)置顶,速度越快越靠前
+  double _speedValue(double? speed) =>
+      (speed == null || speed < 0) ? 1e9 : -speed;
+
+  List<Proxy> _sortOfSpeed(List<Proxy> proxies) {
+    return List.of(proxies)..sort((a, b) {
+      final aSpeed = _ref.read(getSpeedProvider(proxyName: a.name));
+      final bSpeed = _ref.read(getSpeedProvider(proxyName: b.name));
+      return _speedValue(aSpeed).compareTo(_speedValue(bSpeed));
+    });
+  }
+
   List<Proxy> getSortProxies({
     required List<Proxy> proxies,
     required ProxiesSortType sortType,
@@ -1593,6 +1605,7 @@ class AppController {
     return switch (sortType) {
       ProxiesSortType.none => proxies,
       ProxiesSortType.delay => _sortOfDelay(proxies: proxies, testUrl: testUrl),
+      ProxiesSortType.speed => _sortOfSpeed(proxies),
       ProxiesSortType.name => _sortOfName(proxies),
     };
   }

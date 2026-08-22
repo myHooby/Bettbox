@@ -316,6 +316,7 @@ const _$ProxiesTypeEnumMap = {ProxiesType.tab: 'tab', ProxiesType.list: 'list'};
 const _$ProxiesSortTypeEnumMap = {
   ProxiesSortType.none: 'none',
   ProxiesSortType.delay: 'delay',
+  ProxiesSortType.speed: 'speed',
   ProxiesSortType.name: 'name',
 };
 
