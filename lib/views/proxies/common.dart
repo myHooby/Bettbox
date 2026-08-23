@@ -249,6 +249,29 @@ Future<bool> _testProxySpeed(String proxyName) async {
   appController.setSpeed(
     SpeedResult(name: proxyName, url: proxiesStyle.speedTestUrl, speed: 0),
   );
+
+  // 延迟预检:先测延迟并写回,timeout 的节点直接判定测速失败,不再消耗下载流量
+  final cardState = appController.getProxyCardState(proxyName);
+  final testUrl = appController.getRealTestUrl(
+    cardState.testUrl.getSafeValue(''),
+  );
+  try {
+    final delay = await clashCore.getDelay(testUrl, proxyName);
+    appController.setDelay(delay);
+    if ((delay.value ?? -1) < 0) {
+      appController.setSpeed(
+        SpeedResult(
+          name: proxyName,
+          url: proxiesStyle.speedTestUrl,
+          speed: -1,
+        ),
+      );
+      return false;
+    }
+  } catch (_) {
+    // 预检异常不阻塞,继续尝试下载测速
+  }
+
   try {
     final result = await clashCore.getSpeed(
       proxiesStyle.speedTestUrl,
