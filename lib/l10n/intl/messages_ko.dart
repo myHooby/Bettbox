@@ -874,6 +874,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "일괄 테스트는 노드마다 순서대로 파일을 다운로드하여 많은 데이터를 소모할 수 있습니다",
     ),
     "speedTestUrl": MessageLookupByLibrary.simpleMessage("속도 테스트 URL"),
+    "speedWidget": MessageLookupByLibrary.simpleMessage("홈 화면 속도 위젯"),
+    "speedWidgetDesc": MessageLookupByLibrary.simpleMessage(
+      "홈 화면에 현재 노드와 속도를 표시하고 프록시를 켜고 끌 수 있습니다(홈 화면 길게 눌러 추가)",
+    ),
     "spinningLines": MessageLookupByLibrary.simpleMessage("스핀 라인"),
     "stackMode": MessageLookupByLibrary.simpleMessage("스택 모드"),
     "standard": MessageLookupByLibrary.simpleMessage("표준"),

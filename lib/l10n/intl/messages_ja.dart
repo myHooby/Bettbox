@@ -862,6 +862,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "一括テストはノードごとに順番にダウンロードを行い、大量のデータを消費する可能性があります",
     ),
     "speedTestUrl": MessageLookupByLibrary.simpleMessage("スピードテストURL"),
+    "speedWidget": MessageLookupByLibrary.simpleMessage("ホーム画面スピードウィジェット"),
+    "speedWidgetDesc": MessageLookupByLibrary.simpleMessage(
+      "ホーム画面に現在のノードと速度を表示し、プロキシの切り替えも可能です(ホーム画面を長押しして追加)",
+    ),
     "spinningLines": MessageLookupByLibrary.simpleMessage("スピンライン"),
     "stackMode": MessageLookupByLibrary.simpleMessage("スタックモード"),
     "standard": MessageLookupByLibrary.simpleMessage("標準"),

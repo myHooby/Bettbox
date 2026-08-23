@@ -5,6 +5,7 @@ import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
 import 'package:bett_box/clash/clash.dart';
+import 'package:bett_box/common/common.dart';
 import 'package:bett_box/enum/enum.dart';
 import 'package:bett_box/helper/helper.dart';
 
@@ -25,7 +26,6 @@ import 'package:tray_manager/tray_manager.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:yaml/yaml.dart';
 
-import 'common/common.dart';
 import 'common/flclash_database_extractor.dart';
 import 'models/models.dart';
 import 'views/profiles/override_profile.dart';
@@ -412,10 +412,13 @@ class AppController {
         _ref.read(vpnSettingProvider).networkSpeedNotification;
     final enableTraySpeed =
         system.isMacOS && _ref.read(vpnSettingProvider).enableTraySpeed;
+    final enableSpeedWidget =
+        system.isAndroid && _ref.read(vpnSettingProvider).enableSpeedWidget;
 
     if (!shouldUpdateDashboard &&
         !networkSpeedNotification &&
-        !enableTraySpeed) {
+        !enableTraySpeed &&
+        !enableSpeedWidget) {
       return;
     }
 
@@ -427,6 +430,10 @@ class AppController {
 
     if (enableTraySpeed) {
       await tray.updateSpeed(traffic);
+    }
+
+    if (enableSpeedWidget) {
+      await updateSpeedWidget(traffic);
     }
 
     if (networkSpeedNotification) {

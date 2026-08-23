@@ -55,6 +55,8 @@
   "disableQuicDesc": "特定の通信問題を解決するためQUICを無効化",
   "networkSpeedNotification": "速度通知",
   "networkSpeedNotificationDesc": "通知バーに通信速度とサブスク情報を表示",
+  "speedWidget": "ホーム画面スピードウィジェット",
+  "speedWidgetDesc": "ホーム画面に現在のノードと速度を表示し、プロキシの切り替えも可能です(ホーム画面を長押しして追加)",
   "alwaysShowTitleBar": "タイトルボタン",
   "alwaysShowTitleBarDesc": "右上タイトルバーのボタンを常に表示",
   "trayEnhancement": "トレイ拡張",

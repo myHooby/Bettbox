@@ -210,7 +210,8 @@ class GlobalState {
     final vpnProps = appController.ref.read(vpnSettingProvider);
     final keepTrafficUpdates =
         (system.isAndroid && vpnProps.networkSpeedNotification) ||
-        (system.isMacOS && vpnProps.enableTraySpeed);
+        (system.isMacOS && vpnProps.enableTraySpeed) ||
+        (system.isAndroid && vpnProps.enableSpeedWidget);
     if (!keepTrafficUpdates) {
       stopUpdateTasks();
     }

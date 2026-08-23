@@ -1109,6 +1109,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "تست گروهی فایل‌ها را یکی‌یکی دانلود می‌کند و ممکن است حجم زیادی از داده مصرف کند",
     ),
     "speedTestUrl": MessageLookupByLibrary.simpleMessage("آدرس تست سرعت"),
+    "speedWidget": MessageLookupByLibrary.simpleMessage("ابزارک سرعت"),
+    "speedWidgetDesc": MessageLookupByLibrary.simpleMessage(
+      "نمایش گره و سرعت فعلی روی صفحه اصلی با کلید روشن/خاموش کردن پروکسی (با لمس طولانی اضافه کنید)",
+    ),
     "spinningLines": MessageLookupByLibrary.simpleMessage("خطوط چرخان"),
     "stackMode": MessageLookupByLibrary.simpleMessage("حالت پشته"),
     "standard": MessageLookupByLibrary.simpleMessage("استاندارد"),

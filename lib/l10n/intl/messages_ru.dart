@@ -1098,6 +1098,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Групповой тест загружает файлы поочерёдно и может расходовать большой объём трафика",
     ),
     "speedTestUrl": MessageLookupByLibrary.simpleMessage("URL теста скорости"),
+    "speedWidget": MessageLookupByLibrary.simpleMessage("Виджет скорости"),
+    "speedWidgetDesc": MessageLookupByLibrary.simpleMessage(
+      "Показывает текущий узел и скорость на главном экране (добавьте долгим нажатием)",
+    ),
     "spinningLines": MessageLookupByLibrary.simpleMessage("Вращающиеся линии"),
     "stackMode": MessageLookupByLibrary.simpleMessage("Режим стека"),
     "standard": MessageLookupByLibrary.simpleMessage("Стандарт"),

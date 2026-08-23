@@ -486,6 +486,32 @@ class NetworkSpeedNotificationItem extends ConsumerWidget {
   }
 }
 
+// 桌面网速小组件开关:开启后在桌面长按添加,展示当前节点/实时速度并提供代理开关
+class SpeedWidgetItem extends ConsumerWidget {
+  const SpeedWidgetItem({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final enableSpeedWidget = ref.watch(
+      vpnSettingProvider.select((state) => state.enableSpeedWidget),
+    );
+    return ListItem.switchItem(
+      title: Text(appLocalizations.speedWidget),
+      subtitle: Text(appLocalizations.speedWidgetDesc),
+      delegate: SwitchDelegate(
+        value: enableSpeedWidget,
+        onChanged: (bool value) {
+          ref
+              .read(vpnSettingProvider.notifier)
+              .updateState(
+                (state) => state.copyWith(enableSpeedWidget: value),
+              );
+        },
+      ),
+    );
+  }
+}
+
 class TraySection extends ConsumerWidget {
   const TraySection({super.key});
 
@@ -711,6 +737,7 @@ class OtherSettingView extends ConsumerWidget {
       const StoreFixItem(),
       const DisableQuicSection(),
       if (system.isAndroid) const NetworkSpeedNotificationItem(),
+      if (system.isAndroid) const SpeedWidgetItem(),
       if (!system.isAndroid) const TraySection(),
       if (system.isWindows) const HighPriorityItem(),
       if (system.isWindows) const NetworkFixItem(),

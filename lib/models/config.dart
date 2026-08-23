@@ -225,6 +225,8 @@ abstract class VpnProps with _$VpnProps {
     @Default(false) bool networkFix,
     @Default(false) bool disableQuic,
     @Default(false) bool networkSpeedNotification,
+    // Android 桌面网速小组件:展示当前节点与实时速度,并提供代理开关
+    @Default(false) bool enableSpeedWidget,
     @Default(false) bool excludeChina,
     @Default(false) bool trayEnhancement,
     @Default(TrayClickBehavior.showPanel)

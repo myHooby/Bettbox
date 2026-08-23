@@ -4,4 +4,7 @@
     <string name="service_running">服務正在運行中</string>
     <string name="core_suspended">已暫停</string>
     <string name="smart_auto_stop_service_running">智能啟停運行中</string>
+    <string name="speed_widget_label">Bettbox 網速</string>
+    <string name="speed_widget_desc">目前節點與網速,並提供代理開關</string>
+    <string name="speed_widget_toggle">開關代理</string>
 </resources>

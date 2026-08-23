@@ -55,6 +55,8 @@
   "disableQuicDesc": "Отключить QUIC для решения сетевых проблем",
   "networkSpeedNotification": "Скорость в уведомлениях",
   "networkSpeedNotificationDesc": "Показывать скорость и подписку в панели уведомлений",
+  "speedWidget": "Виджет скорости",
+  "speedWidgetDesc": "Показывает текущий узел и скорость на главном экране (добавьте долгим нажатием)",
   "alwaysShowTitleBar": "Кнопки заголовка",
   "alwaysShowTitleBarDesc": "Всегда показывать кнопки в правом верхнем углу",
   "trayEnhancement": "Улучшение трея",

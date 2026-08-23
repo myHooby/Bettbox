@@ -1087,6 +1087,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Batch speed test downloads files one by one and may consume a lot of data",
     ),
     "speedTestUrl": MessageLookupByLibrary.simpleMessage("Speed Test URL"),
+    "speedWidget": MessageLookupByLibrary.simpleMessage("Speed Widget"),
+    "speedWidgetDesc": MessageLookupByLibrary.simpleMessage(
+      "Show current node and speed on home screen (long-press home screen to add)",
+    ),
     "spinningLines": MessageLookupByLibrary.simpleMessage("Spinning Lines"),
     "stackMode": MessageLookupByLibrary.simpleMessage("Stack Mode"),
     "standard": MessageLookupByLibrary.simpleMessage("Standard"),

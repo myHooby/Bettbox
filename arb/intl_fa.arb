@@ -55,6 +55,8 @@
   "disableQuicDesc": "غیرفعال‌سازی QUIC برای رفع مشکلات شبکه",
   "networkSpeedNotification": "اعلان سرعت",
   "networkSpeedNotificationDesc": "نمایش سرعت شبکه و اشتراک در نوار اعلان",
+  "speedWidget": "ابزارک سرعت",
+  "speedWidgetDesc": "نمایش گره و سرعت فعلی روی صفحه اصلی با کلید روشن/خاموش کردن پروکسی (با لمس طولانی اضافه کنید)",
   "alwaysShowTitleBar": "دکمه‌های عنوان",
   "alwaysShowTitleBarDesc": "نمایش همیشگی دکمه‌های نوار عنوان بالا سمت راست",
   "trayEnhancement": "ارتقای منوی سینی",

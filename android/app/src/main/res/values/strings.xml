@@ -4,4 +4,7 @@
     <string name="service_running">Service is running</string>
     <string name="core_suspended">Suspended</string>
     <string name="smart_auto_stop_service_running">Auto-stop is running</string>
+    <string name="speed_widget_label">Bettbox Speed</string>
+    <string name="speed_widget_desc">Current node and network speed with a proxy toggle</string>
+    <string name="speed_widget_toggle">Toggle proxy</string>
 </resources>

@@ -183,6 +183,7 @@ _VpnProps _$VpnPropsFromJson(Map<String, dynamic> json) => _VpnProps(
   networkFix: json['networkFix'] as bool? ?? false,
   disableQuic: json['disableQuic'] as bool? ?? false,
   networkSpeedNotification: json['networkSpeedNotification'] as bool? ?? false,
+  enableSpeedWidget: json['enableSpeedWidget'] as bool? ?? false,
   excludeChina: json['excludeChina'] as bool? ?? false,
   trayEnhancement: json['trayEnhancement'] as bool? ?? false,
   trayLeftClickBehavior:
@@ -217,6 +218,7 @@ Map<String, dynamic> _$VpnPropsToJson(_VpnProps instance) => <String, dynamic>{
   'networkFix': instance.networkFix,
   'disableQuic': instance.disableQuic,
   'networkSpeedNotification': instance.networkSpeedNotification,
+  'enableSpeedWidget': instance.enableSpeedWidget,
   'excludeChina': instance.excludeChina,
   'trayEnhancement': instance.trayEnhancement,
   'trayLeftClickBehavior':

@@ -34,6 +34,7 @@ export 'proxy.dart';
 export 'render.dart';
 export 'request.dart';
 export 'scroll.dart';
+export 'speed_widget.dart';
 export 'string.dart';
 export 'system.dart';
 export 'task.dart';

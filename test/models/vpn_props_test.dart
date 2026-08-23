@@ -30,4 +30,22 @@ void main() {
       expect(restored.trayRightClickBehavior, TrayClickBehavior.showPanel);
     });
   });
+
+  group('VpnProps 桌面网速小组件', () {
+    test('默认关闭,开启后序列化往返一致', () {
+      const props = VpnProps();
+      expect(props.enableSpeedWidget, isFalse);
+
+      const enabled = VpnProps(enableSpeedWidget: true);
+      final restored = VpnProps.fromJson(
+        jsonDecode(jsonEncode(enabled.toJson())) as Map<String, dynamic>,
+      );
+      expect(restored.enableSpeedWidget, isTrue);
+    });
+
+    test('旧 JSON 缺少字段时回落默认关闭', () {
+      final restored = VpnProps.fromJson({});
+      expect(restored.enableSpeedWidget, isFalse);
+    });
+  });
 }

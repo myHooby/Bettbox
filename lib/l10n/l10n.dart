@@ -489,6 +489,26 @@ class AppLocalizations {
     );
   }
 
+  /// `Speed Widget`
+  String get speedWidget {
+    return Intl.message(
+      'Speed Widget',
+      name: 'speedWidget',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show current node and speed on home screen (long-press home screen to add)`
+  String get speedWidgetDesc {
+    return Intl.message(
+      'Show current node and speed on home screen (long-press home screen to add)',
+      name: 'speedWidgetDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Title Buttons`
   String get alwaysShowTitleBar {
     return Intl.message(

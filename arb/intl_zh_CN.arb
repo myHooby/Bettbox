@@ -55,6 +55,8 @@
   "disableQuicDesc": "禁用 QUIC 以解决特定网络问题",
   "networkSpeedNotification": "网速通知",
   "networkSpeedNotificationDesc": "在通知栏显示网速和订阅信息",
+  "speedWidget": "桌面网速小组件",
+  "speedWidgetDesc": "在桌面显示当前节点与实时速度,并提供代理开关(桌面长按添加)",
   "alwaysShowTitleBar": "标题按钮",
   "alwaysShowTitleBarDesc": "始终显示右上角的标题栏按钮",
   "trayEnhancement": "托盘增强",

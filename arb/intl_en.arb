@@ -55,6 +55,8 @@
   "disableQuicDesc": "Disable QUIC to resolve specific network issues",
   "networkSpeedNotification": "Speed in Notification",
   "networkSpeedNotificationDesc": "Show speed and subscription info in notification bar",
+  "speedWidget": "Speed Widget",
+  "speedWidgetDesc": "Show current node and speed on home screen (long-press home screen to add)",
   "alwaysShowTitleBar": "Title Buttons",
   "alwaysShowTitleBarDesc": "Always show the title bar buttons in the top-right corner",
   "trayEnhancement": "Tray Enhancement",

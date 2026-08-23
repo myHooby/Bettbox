@@ -768,6 +768,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "批量测速将逐个节点下载文件,可能消耗较多流量",
     ),
     "speedTestUrl": MessageLookupByLibrary.simpleMessage("测速下载源"),
+    "speedWidget": MessageLookupByLibrary.simpleMessage("桌面网速小组件"),
+    "speedWidgetDesc": MessageLookupByLibrary.simpleMessage(
+      "在桌面显示当前节点与实时速度,并提供代理开关(桌面长按添加)",
+    ),
     "spinningLines": MessageLookupByLibrary.simpleMessage("流光旋绕"),
     "stackMode": MessageLookupByLibrary.simpleMessage("栈模式"),
     "standard": MessageLookupByLibrary.simpleMessage("标准"),
