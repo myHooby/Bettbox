@@ -10,6 +10,7 @@ import android.widget.RemoteViews
 import com.appshub.bettbox.GlobalState
 import com.appshub.bettbox.MainActivity
 import com.appshub.bettbox.R
+import com.appshub.bettbox.RunState
 import es.antonborri.home_widget.HomeWidgetPlugin
 import es.antonborri.home_widget.HomeWidgetProvider
 
@@ -25,7 +26,8 @@ class BettboxWidgetProvider : HomeWidgetProvider() {
         val nodeName = widgetData.getString(KEY_NODE, "").orEmpty()
         val upSpeed = widgetData.getString(KEY_UP, null) ?: "0B/s"
         val downSpeed = widgetData.getString(KEY_DOWN, null) ?: "0B/s"
-        val running = widgetData.getBoolean(KEY_RUNNING, false)
+        // 开关状态取原生实时运行状态,点击后立即正确切换且不依赖数据推送
+        val running = GlobalState.currentRunState != RunState.STOP
 
         appWidgetIds.forEach { id ->
             val views =
@@ -87,6 +89,5 @@ class BettboxWidgetProvider : HomeWidgetProvider() {
         const val KEY_NODE = "speedWidget.node"
         const val KEY_UP = "speedWidget.up"
         const val KEY_DOWN = "speedWidget.down"
-        const val KEY_RUNNING = "speedWidget.running"
     }
 }
