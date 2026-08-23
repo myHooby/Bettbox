@@ -105,6 +105,16 @@ class ServicePlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 )
                 result.success(true)
             }
+            "updateSpeedWidget" -> {
+                // 桌面网速小组件直推:与通知速度同链路,原生直接渲染 RemoteViews
+                com.appshub.bettbox.receivers.BettboxWidgetProvider.push(
+                    com.appshub.bettbox.BettboxApplication.getAppContext(),
+                    call.argument<String>("node") ?: "",
+                    call.argument<String>("up") ?: "",
+                    call.argument<String>("down") ?: "",
+                )
+                result.success(true)
+            }
             "restoreNotification" -> {
                 val context = com.appshub.bettbox.BettboxApplication.getAppContext()
                 if (context != null) {

@@ -100,6 +100,15 @@ class Service {
     });
   }
 
+  // 桌面网速小组件数据直推:原生直接渲染 RemoteViews
+  Future<void> updateSpeedWidget(String node, String up, String down) async {
+    await methodChannel.invokeMethod<void>('updateSpeedWidget', {
+      'node': node,
+      'up': up,
+      'down': down,
+    });
+  }
+
   Future<void> restoreNotification() async {
     await methodChannel.invokeMethod<void>('restoreNotification');
   }

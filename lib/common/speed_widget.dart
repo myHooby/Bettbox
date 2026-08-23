@@ -1,17 +1,13 @@
 import 'package:bett_box/common/common.dart';
 import 'package:bett_box/models/models.dart';
+import 'package:bett_box/plugins/service.dart' as vpn_service;
 import 'package:bett_box/state.dart';
-import 'package:home_widget/home_widget.dart';
 
 var _speedWidgetLogged = false;
 
-// 桌面网速小组件推送:由 updateTraffic 每秒调用,数据经 home_widget 写入
-// SharedPreferences 后触发原生 BettboxWidgetProvider 渲染。
-// 键名与 BettboxWidgetProvider.kt 的常量保持一致;
-// qualifiedAndroidName 必须用完整限定名,类位于 receivers 子包
+// 桌面网速小组件推送:数据经与通知速度相同的 service 通道直达原生渲染。
+// 调用方(updateTraffic)已按设置开关把关,这里不再重复读配置
 Future<void> updateSpeedWidget(Traffic traffic) async {
-  if (!globalState.config.vpnProps.enableSpeedWidget) return;
-
   final appController = globalState.appController;
   var groupName = appController.getCurrentGroupName();
   if (groupName == null || groupName.isEmpty) {
@@ -23,17 +19,13 @@ Future<void> updateSpeedWidget(Traffic traffic) async {
   final nodeName =
       (groupName == null || groupName.isEmpty)
           ? ''
-          : appController.getSelectedProxyName(groupName);
+          : (appController.getSelectedProxyName(groupName) ?? '');
 
   try {
-    await Future.wait([
-      HomeWidget.saveWidgetData<String>('speedWidget.node', nodeName),
-      HomeWidget.saveWidgetData<String>('speedWidget.up', traffic.up.show),
-      HomeWidget.saveWidgetData<String>('speedWidget.down', traffic.down.show),
-    ]);
-    await HomeWidget.updateWidget(
-      qualifiedAndroidName:
-          'com.appshub.bettbox.receivers.BettboxWidgetProvider',
+    await vpn_service.service?.updateSpeedWidget(
+      nodeName,
+      traffic.up.show,
+      traffic.down.show,
     );
     if (!_speedWidgetLogged) {
       _speedWidgetLogged = true;
