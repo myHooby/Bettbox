@@ -50,6 +50,16 @@ class BettboxWidgetProvider : AppWidgetProvider() {
 
         @Volatile private var lastDown: String? = null
 
+        // 运行状态变化时由 GlobalState 调用:停止时图标复位并把速度归零,
+        // 使快捷面板/应用内开关代理后小组件立即跟随
+        fun onRunStateChanged(context: Context, running: Boolean) {
+            if (!running) {
+                lastUp = null
+                lastDown = null
+            }
+            render(context)
+        }
+
         // Dart 每秒调用:直接更新全部小组件实例
         fun push(context: Context, node: String?, up: String?, down: String?) {
             lastNode = node

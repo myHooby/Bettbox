@@ -73,6 +73,13 @@ object GlobalState {
         }
         currentRunState = newState
         _runState.value = newState
+        // 小组件跟随运行状态刷新:停止时图标复位并把速度归零
+        runCatching {
+            com.appshub.bettbox.receivers.BettboxWidgetProvider.onRunStateChanged(
+                BettboxApplication.getAppContext(),
+                newState != RunState.STOP,
+            )
+        }
     }
 
     private fun startPendingTimeout() {
