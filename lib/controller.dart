@@ -403,9 +403,6 @@ class AppController {
   }
 
   Future<void> updateTraffic() async {
-    _ref.read(totalTrafficProvider.notifier).value = await clashCore
-        .getTotalTraffic();
-
     final shouldUpdateDashboard = await _shouldUpdateDashboardTick();
     final networkSpeedNotification =
         system.isAndroid &&
@@ -415,12 +412,17 @@ class AppController {
     final enableSpeedWidget =
         system.isAndroid && _ref.read(vpnSettingProvider).enableSpeedWidget;
 
+    final isScreenOn = globalState.appState.isScreenOn;
+
     if (!shouldUpdateDashboard &&
-        !networkSpeedNotification &&
+        !(networkSpeedNotification && isScreenOn) &&
         !enableTraySpeed &&
-        !enableSpeedWidget) {
+        !(enableSpeedWidget && isScreenOn)) {
       return;
     }
+
+    _ref.read(totalTrafficProvider.notifier).value = await clashCore
+        .getTotalTraffic();
 
     final traffic = await clashCore.getTraffic();
 
@@ -432,11 +434,11 @@ class AppController {
       await tray.updateSpeed(traffic);
     }
 
-    if (enableSpeedWidget) {
+    if (enableSpeedWidget && isScreenOn) {
       await updateSpeedWidget(traffic);
     }
 
-    if (networkSpeedNotification) {
+    if (networkSpeedNotification && isScreenOn) {
       final currentProfileId = _ref.read(currentProfileIdProvider);
       final profiles = _ref.read(profilesProvider);
       final profile = profiles
