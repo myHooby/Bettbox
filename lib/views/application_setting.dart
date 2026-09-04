@@ -237,7 +237,7 @@ class ApplicationSettingView extends StatelessWidget {
       const SpeedTestConcurrencyItem(),
       AutoCheckUpdateItem(),
     ];
-    return generateListView(items);
+    return generateListView(generateSection(items: items));
   }
 }
 

@@ -354,10 +354,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Max 2 IPs/CIDRs, comma-separated`
+  /// `Enter IP, CIDR or Gateway:IP/CIDR`
   String get networkMatchHint {
     return Intl.message(
-      'Max 2 IPs/CIDRs, comma-separated',
+      'Enter IP, CIDR or Gateway:IP/CIDR',
       name: 'networkMatchHint',
       desc: '',
       args: [],
@@ -469,6 +469,36 @@ class AppLocalizations {
     );
   }
 
+  /// `High Priority`
+  String get notificationHighPriority {
+    return Intl.message(
+      'High Priority',
+      name: 'notificationHighPriority',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Adjust current notification bar to foreground high priority`
+  String get notificationHighPriorityDesc {
+    return Intl.message(
+      'Adjust current notification bar to foreground high priority',
+      name: 'notificationHighPriorityDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `High-priority notifications can alleviate background core keep-alive issues on some customized systems. If your VPN service is currently running normally, it is recommended to keep this option disabled. Are you sure you want to enable it?`
+  String get notificationHighPriorityTip {
+    return Intl.message(
+      'High-priority notifications can alleviate background core keep-alive issues on some customized systems. If your VPN service is currently running normally, it is recommended to keep this option disabled. Are you sure you want to enable it?',
+      name: 'notificationHighPriorityTip',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Speed in Notification`
   String get networkSpeedNotification {
     return Intl.message(
@@ -484,26 +514,6 @@ class AppLocalizations {
     return Intl.message(
       'Show speed and subscription info in notification bar',
       name: 'networkSpeedNotificationDesc',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Speed Widget`
-  String get speedWidget {
-    return Intl.message(
-      'Speed Widget',
-      name: 'speedWidget',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Show current node and speed on home screen (long-press home screen to add)`
-  String get speedWidgetDesc {
-    return Intl.message(
-      'Show current node and speed on home screen (long-press home screen to add)',
-      name: 'speedWidgetDesc',
       desc: '',
       args: [],
     );
@@ -1624,10 +1634,30 @@ class AppLocalizations {
     return Intl.message('Core', name: 'core', desc: '', args: []);
   }
 
-  /// `Bettbox is based on the powerful and flexible Mihomo (Clash.Meta) proxy kernel, dedicated to a superior user experience. Forked from FlClash: Better Experience, Out of the box`
+  /// `Linkage Switch`
+  String get showStartSwitch {
+    return Intl.message(
+      'Linkage Switch',
+      name: 'showStartSwitch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Display independent switch button on the homepage`
+  String get showStartSwitchDesc {
+    return Intl.message(
+      'Display independent switch button on the homepage',
+      name: 'showStartSwitchDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bettbox is based on the powerful and flexible Mihomo (Clash.Meta) proxy kernel, dedicated to a superior user experience. Our vision: Connecting AI, Accelerating Innovation`
   String get desc {
     return Intl.message(
-      'Bettbox is based on the powerful and flexible Mihomo (Clash.Meta) proxy kernel, dedicated to a superior user experience. Forked from FlClash: Better Experience, Out of the box',
+      'Bettbox is based on the powerful and flexible Mihomo (Clash.Meta) proxy kernel, dedicated to a superior user experience. Our vision: Connecting AI, Accelerating Innovation',
       name: 'desc',
       desc: '',
       args: [],
@@ -2204,96 +2234,6 @@ class AppLocalizations {
     return Intl.message('Delay Test', name: 'startTest', desc: '', args: []);
   }
 
-  /// `Speed Test`
-  String get speedTest {
-    return Intl.message('Speed Test', name: 'speedTest', desc: '', args: []);
-  }
-
-  /// `Speed Test URL`
-  String get speedTestUrl {
-    return Intl.message(
-      'Speed Test URL',
-      name: 'speedTestUrl',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Speed Test Duration`
-  String get speedTestDuration {
-    return Intl.message(
-      'Speed Test Duration',
-      name: 'speedTestDuration',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Download test duration per node`
-  String get speedTestDurationDesc {
-    return Intl.message(
-      'Download test duration per node',
-      name: 'speedTestDurationDesc',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Speed Test Concurrency`
-  String get speedTestConcurrency {
-    return Intl.message(
-      'Speed Test Concurrency',
-      name: 'speedTestConcurrency',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Nodes tested simultaneously; higher is faster but per-node readings drop`
-  String get speedTestConcurrencyDesc {
-    return Intl.message(
-      'Nodes tested simultaneously; higher is faster but per-node readings drop',
-      name: 'speedTestConcurrencyDesc',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Test Failed`
-  String get speedTestFailed {
-    return Intl.message(
-      'Test Failed',
-      name: 'speedTestFailed',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Test Completed`
-  String get speedTestCompleted {
-    return Intl.message(
-      'Test Completed',
-      name: 'speedTestCompleted',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Batch speed test downloads files one by one and may consume a lot of data`
-  String get speedTestTrafficTip {
-    return Intl.message(
-      'Batch speed test downloads files one by one and may consume a lot of data',
-      name: 'speedTestTrafficTip',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Testing`
-  String get testing {
-    return Intl.message('Testing', name: 'testing', desc: '', args: []);
-  }
-
   /// `Add Profile`
   String get addProfile {
     return Intl.message('Add Profile', name: 'addProfile', desc: '', args: []);
@@ -2752,6 +2692,31 @@ class AppLocalizations {
   /// `Start`
   String get start {
     return Intl.message('Start', name: 'start', desc: '', args: []);
+  }
+
+  /// `No usage data`
+  String get noUsageData {
+    return Intl.message(
+      'No usage data',
+      name: 'noUsageData',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Local File`
+  String get localFile {
+    return Intl.message('Local File', name: 'localFile', desc: '', args: []);
+  }
+
+  /// `Expired`
+  String get expired {
+    return Intl.message('Expired', name: 'expired', desc: '', args: []);
+  }
+
+  /// `Last edited`
+  String get lastEdit {
+    return Intl.message('Last edited', name: 'lastEdit', desc: '', args: []);
   }
 
   /// `Stop`
@@ -3889,9 +3854,14 @@ class AppLocalizations {
     return Intl.message('IP/CIDR', name: 'ipcidr', desc: '', args: []);
   }
 
-  /// `Domain`
+  /// `Organization / Domain`
   String get domain {
-    return Intl.message('Domain', name: 'domain', desc: '', args: []);
+    return Intl.message(
+      'Organization / Domain',
+      name: 'domain',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Reset`
@@ -4844,10 +4814,10 @@ class AppLocalizations {
     return Intl.message('Dark Icon', name: 'darkIcon', desc: '', args: []);
   }
 
-  /// `Manually switch dark desktop app icon`
+  /// `Manually switch dark app icon`
   String get darkIconDesc {
     return Intl.message(
-      'Manually switch dark desktop app icon',
+      'Manually switch dark app icon',
       name: 'darkIconDesc',
       desc: '',
       args: [],
@@ -5572,6 +5542,236 @@ class AppLocalizations {
   /// `Close All`
   String get closeAll {
     return Intl.message('Close All', name: 'closeAll', desc: '', args: []);
+  }
+
+  /// `More IP Information`
+  String get moreIpInfo {
+    return Intl.message(
+      'More IP Information',
+      name: 'moreIpInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View Detailed IP Data`
+  String get viewDetailedIpData {
+    return Intl.message(
+      'View Detailed IP Data',
+      name: 'viewDetailedIpData',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `IP Address`
+  String get ipAddress {
+    return Intl.message('IP Address', name: 'ipAddress', desc: '', args: []);
+  }
+
+  /// `Country / Region`
+  String get countryOrRegion {
+    return Intl.message(
+      'Country / Region',
+      name: 'countryOrRegion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Province / City`
+  String get provinceAndCity {
+    return Intl.message(
+      'Province / City',
+      name: 'provinceAndCity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Organization / ASN`
+  String get operatorOrAsn {
+    return Intl.message(
+      'Organization / ASN',
+      name: 'operatorOrAsn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continent`
+  String get continent {
+    return Intl.message('Continent', name: 'continent', desc: '', args: []);
+  }
+
+  /// `Copied to clipboard`
+  String get copiedToClipboard {
+    return Intl.message(
+      'Copied to clipboard',
+      name: 'copiedToClipboard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Private / LAN IP Address`
+  String get privateIp {
+    return Intl.message(
+      'Private / LAN IP Address',
+      name: 'privateIp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ISP`
+  String get isp {
+    return Intl.message('ISP', name: 'isp', desc: '', args: []);
+  }
+
+  /// `Network error, please try again later`
+  String get networkErrorRetryLater {
+    return Intl.message(
+      'Network error, please try again later',
+      name: 'networkErrorRetryLater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TUN Virtual Network Adapter`
+  String get tunVirtualAddress {
+    return Intl.message(
+      'TUN Virtual Network Adapter',
+      name: 'tunVirtualAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Install Time`
+  String get installTime {
+    return Intl.message(
+      'Install Time',
+      name: 'installTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Time`
+  String get updateTime {
+    return Intl.message('Update Time', name: 'updateTime', desc: '', args: []);
+  }
+
+  /// `Speed Test`
+  String get speedTest {
+    return Intl.message('Speed Test', name: 'speedTest', desc: '', args: []);
+  }
+
+  /// `Speed Test URL`
+  String get speedTestUrl {
+    return Intl.message(
+      'Speed Test URL',
+      name: 'speedTestUrl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Speed Test Duration`
+  String get speedTestDuration {
+    return Intl.message(
+      'Speed Test Duration',
+      name: 'speedTestDuration',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download test duration per node`
+  String get speedTestDurationDesc {
+    return Intl.message(
+      'Download test duration per node',
+      name: 'speedTestDurationDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test Failed`
+  String get speedTestFailed {
+    return Intl.message(
+      'Test Failed',
+      name: 'speedTestFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test Completed`
+  String get speedTestCompleted {
+    return Intl.message(
+      'Test Completed',
+      name: 'speedTestCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Batch speed test downloads files one by one and may consume a lot of data`
+  String get speedTestTrafficTip {
+    return Intl.message(
+      'Batch speed test downloads files one by one and may consume a lot of data',
+      name: 'speedTestTrafficTip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Testing`
+  String get testing {
+    return Intl.message('Testing', name: 'testing', desc: '', args: []);
+  }
+
+  /// `Speed Test Concurrency`
+  String get speedTestConcurrency {
+    return Intl.message(
+      'Speed Test Concurrency',
+      name: 'speedTestConcurrency',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nodes tested simultaneously; higher is faster but per-node readings drop`
+  String get speedTestConcurrencyDesc {
+    return Intl.message(
+      'Nodes tested simultaneously; higher is faster but per-node readings drop',
+      name: 'speedTestConcurrencyDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Speed Widget`
+  String get speedWidget {
+    return Intl.message(
+      'Speed Widget',
+      name: 'speedWidget',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show current node and speed on home screen (long-press home screen to add)`
+  String get speedWidgetDesc {
+    return Intl.message(
+      'Show current node and speed on home screen (long-press home screen to add)',
+      name: 'speedWidgetDesc',
+      desc: '',
+      args: [],
+    );
   }
 }
 

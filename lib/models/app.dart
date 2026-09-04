@@ -37,7 +37,6 @@ abstract class AppState with _$AppState {
     required Traffic totalTraffic,
     @Default(false) bool realTunEnable,
     @Default(false) bool loading,
-    @Default(true) bool isScreenOn,
     required SystemUiOverlayStyle systemUiOverlayStyle,
   }) = _AppState;
 }

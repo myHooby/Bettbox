@@ -113,8 +113,8 @@ class _ToolViewState extends ConsumerState<ToolsView> {
                       color: context.colorScheme.outlineVariant.withValues(
                         alpha:
                             context.colorScheme.brightness == Brightness.light
-                            ? 0.3
-                            : 0.2,
+                            ? 0.6
+                            : 0.45,
                       ),
                       indent: 16,
                       endIndent: 16,
@@ -582,6 +582,16 @@ class _ToolViewState extends ConsumerState<ToolsView> {
       _SearchItem(
         title: appLocalizations.excludeChina,
         subtitle: appLocalizations.excludeChinaDesc,
+        category: otherSettingsCategory,
+        onTap: (context, _) => _pushPage(
+          context,
+          appLocalizations.otherSettings,
+          const OtherSettingView(),
+        ),
+      ),
+      _SearchItem(
+        title: appLocalizations.notificationHighPriority,
+        subtitle: appLocalizations.notificationHighPriorityDesc,
         category: otherSettingsCategory,
         onTap: (context, _) => _pushPage(
           context,
@@ -1390,7 +1400,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
         },
         padding: EdgeInsets.only(
           bottom:
-              20 +
+              (globalState.isAndroidTV ? 80.0 : 20.0) +
               (isMobileView ? getFloatingBottomBarReserveHeight(context) : 0),
           top: 8,
         ),

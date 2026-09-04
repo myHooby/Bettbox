@@ -48,7 +48,7 @@ class ThemeView extends ConsumerWidget {
 
     final toggleItems = [
       if (shouldShowHarmonyFont) _HarmonyFontItem(),
-      if (system.isAndroid) _DarkIconItem(),
+      if (system.isAndroid) const _DarkIconItem(),
       if (system.isWindows) _TrayIconInvertItem(),
       _TextScaleFactorItem(),
     ];
@@ -474,6 +474,7 @@ class _HarmonyFontItem extends ConsumerWidget {
   }
 }
 
+
 class _DarkIconItem extends ConsumerWidget {
   const _DarkIconItem();
 
@@ -500,7 +501,6 @@ class _DarkIconItem extends ConsumerWidget {
       delegate: SwitchDelegate(
         value: useDarkIcon,
         onChanged: (value) async {
-          // Call native method to switch icon
           await app.setLauncherIcon(value);
           ref
               .read(themeSettingProvider.notifier)

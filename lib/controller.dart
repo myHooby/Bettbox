@@ -412,7 +412,7 @@ class AppController {
     final enableSpeedWidget =
         system.isAndroid && _ref.read(vpnSettingProvider).enableSpeedWidget;
 
-    final isScreenOn = globalState.appState.isScreenOn;
+    final isScreenOn = globalState.isScreenOn;
 
     if (!shouldUpdateDashboard &&
         !(networkSpeedNotification && isScreenOn) &&
@@ -918,6 +918,22 @@ class AppController {
         }
       }
 
+      if (currentGroups.isNotEmpty) {
+        bool activeProxyChanged = false;
+        for (final newGroup in newGroups) {
+          final oldGroup = currentGroups.firstWhereOrNull(
+            (g) => g.name == newGroup.name,
+          );
+          if (oldGroup != null && oldGroup.now != newGroup.now) {
+            activeProxyChanged = true;
+            break;
+          }
+        }
+        if (activeProxyChanged) {
+          addCheckIpNumDebounce();
+        }
+      }
+
       final proxiesStyle = _ref.read(proxiesStyleSettingProvider);
       if (!proxiesStyle.hasCustomizedStyle) {
         final hasGroupIcons = newGroups.any((g) => g.icon.trim().isNotEmpty);
@@ -1064,7 +1080,12 @@ class AppController {
   Future handleClear() async {
     await preferences.clearPreferences();
     commonPrint.log('clear preferences');
-    globalState.config = Config(themeProps: defaultThemeProps);
+    globalState.config = Config(
+      themeProps: defaultThemeProps,
+      networkProps: defaultNetworkProps.copyWith(
+        systemProxy: system.isDesktop,
+      ),
+    );
   }
 
   Future<void> autoCheckUpdate() async {

@@ -1,18 +1,15 @@
-﻿#include "my_application.h"
+#include "my_application.h"
 
 #include <flutter_linux/flutter_linux.h>
 #ifdef GDK_WINDOWING_X11
 #include <gdk/gdkx.h>
 #endif
 
-#include <glib/gstdio.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
 
 #include "flutter/generated_plugin_registrant.h"
-
-static GtkWindow* main_window = nullptr;
 
 static gboolean _is_dev_build() {
   return g_str_has_suffix(APPLICATION_ID, ".dev");
@@ -48,27 +45,7 @@ static void _send_control_command(const char* command) {
   close(client_fd);
 }
 
-static void cleanup_legacy_desktop_override() {
-  const gchar* xdg_data_home = g_get_user_data_dir();
-  const gchar* desktop_candidates[] = {
-    _is_dev_build() ? "Bettbox-dev.desktop" : "Bettbox.desktop",
-    _is_dev_build() ? "bettbox-dev.desktop" : "bettbox.desktop",
-    "com.appshub.bettbox.desktop",
-    nullptr
-  };
-  for (int i = 0; desktop_candidates[i] != nullptr; i++) {
-    g_autofree gchar* user_desktop = g_build_filename(
-        xdg_data_home, "applications", desktop_candidates[i], nullptr);
-    if (g_file_test(user_desktop, G_FILE_TEST_EXISTS)) {
-      g_remove(user_desktop);
-    }
-  }
-  const gchar* config_dir = g_get_user_config_dir();
-  g_autofree gchar* icon_pref = g_build_filename(config_dir, "bettbox", "icon_preference", nullptr);
-  g_remove(icon_pref);
-  g_autofree gchar* pending_flag = g_build_filename(config_dir, "bettbox", "pending_desktop_update", nullptr);
-  g_remove(pending_flag);
-}
+static GtkWindow* main_window = nullptr;
 
 struct _MyApplication {
   GtkApplication parent_instance;
@@ -119,6 +96,7 @@ static void my_application_activate(GApplication* application) {
   gtk_window_set_default_size(window, 1280, 720);
   gtk_widget_realize(GTK_WIDGET(window));
 
+  // Save window reference for single-instance activation
   main_window = window;
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
@@ -164,7 +142,6 @@ static gboolean my_application_local_command_line(GApplication* application, gch
 
 // Implements GApplication::startup.
 static void my_application_startup(GApplication* application) {
-  cleanup_legacy_desktop_override();
   G_APPLICATION_CLASS(my_application_parent_class)->startup(application);
 }
 
