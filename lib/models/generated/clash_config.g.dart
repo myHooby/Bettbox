@@ -169,8 +169,7 @@ _Tun _$TunFromJson(Map<String, dynamic> json) => _Tun(
   enable: json['enable'] as bool? ?? false,
   device: json['device'] as String? ?? tunDeviceName,
   autoRoute: json['auto-route'] as bool? ?? false,
-  stack:
-      $enumDecodeNullable(_$TunStackEnumMap, json['stack']) ?? TunStack.mixed,
+  stack: $enumDecodeNullable(_$TunStackEnumMap, json['stack']) ?? TunStack.mips,
   dnsHijack:
       (json['dns-hijack'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -190,6 +189,7 @@ _Tun _$TunFromJson(Map<String, dynamic> json) => _Tun(
   disableIcmpForwarding: json['disable-icmp-forwarding'] as bool? ?? true,
   mtu: (json['mtu'] as num?)?.toInt() ?? 9000,
   endpointIndependentNat: json['endpoint-independent-nat'] as bool? ?? false,
+  autoRedirect: json['auto-redirect'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$TunToJson(_Tun instance) => <String, dynamic>{
@@ -204,12 +204,14 @@ Map<String, dynamic> _$TunToJson(_Tun instance) => <String, dynamic>{
   'disable-icmp-forwarding': instance.disableIcmpForwarding,
   'mtu': instance.mtu,
   'endpoint-independent-nat': instance.endpointIndependentNat,
+  'auto-redirect': instance.autoRedirect,
 };
 
 const _$TunStackEnumMap = {
   TunStack.gvisor: 'gvisor',
   TunStack.system: 'system',
   TunStack.mixed: 'mixed',
+  TunStack.mips: 'mips',
 };
 
 _FallbackFilter _$FallbackFilterFromJson(
@@ -424,10 +426,10 @@ _ClashConfigSnippet _$ClashConfigSnippetFromJson(Map<String, dynamic> json) =>
       rule: json['rules'] == null ? const [] : _genRule(json['rules'] as List?),
       ruleProvider: json['rule-providers'] == null
           ? const []
-          : _genRuleProviders(json['rule-providers'] as Map<String, dynamic>),
+          : _genRuleProviders(json['rule-providers'] as Map),
       subRules: json['sub-rules'] == null
           ? const []
-          : _genSubRules(json['sub-rules'] as Map<String, dynamic>),
+          : _genSubRules(json['sub-rules'] as Map),
     );
 
 Map<String, dynamic> _$ClashConfigSnippetToJson(_ClashConfigSnippet instance) =>

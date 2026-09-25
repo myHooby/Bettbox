@@ -285,7 +285,7 @@ abstract class Tun with _$Tun {
     @Default(false) bool enable,
     @Default(tunDeviceName) String device,
     @JsonKey(name: 'auto-route') @Default(false) bool autoRoute,
-    @Default(TunStack.mixed) TunStack stack,
+    @Default(TunStack.mips) TunStack stack,
     @JsonKey(name: 'dns-hijack') @Default(['any:53']) List<String> dnsHijack,
     @JsonKey(name: 'route-address') @Default([]) List<String> routeAddress,
     @JsonKey(name: 'route-exclude-address')
@@ -299,6 +299,7 @@ abstract class Tun with _$Tun {
     @JsonKey(name: 'endpoint-independent-nat')
     @Default(false)
     bool endpointIndependentNat,
+    @JsonKey(name: 'auto-redirect') @Default(false) bool autoRedirect,
   }) = _Tun;
 
   factory Tun.fromJson(Map<String, Object?> json) => _$TunFromJson(json);
@@ -326,6 +327,7 @@ extension TunExt on Tun {
       if (bypassPrivateRoute) {
         return copyWith(
           autoRoute: true,
+          autoRedirect: system.isLinux,
           routeAddress: [],
           routeExcludeAddress:
               bypassPrivateRouteAddress ??
@@ -334,6 +336,7 @@ extension TunExt on Tun {
       }
       return copyWith(
         autoRoute: true,
+        autoRedirect: system.isLinux,
         routeAddress: [],
         routeExcludeAddress: [],
       );
@@ -667,12 +670,12 @@ List<Rule> _genRule(List<dynamic>? rules) {
   return rules.map((item) => Rule.value(item)).toList();
 }
 
-List<RuleProvider> _genRuleProviders(Map<String, dynamic> json) {
-  return json.entries.map((entry) => RuleProvider(name: entry.key)).toList();
+List<RuleProvider> _genRuleProviders(Map json) {
+  return json.entries.map((entry) => RuleProvider(name: entry.key.toString())).toList();
 }
 
-List<SubRule> _genSubRules(Map<String, dynamic> json) {
-  return json.entries.map((entry) => SubRule(name: entry.key)).toList();
+List<SubRule> _genSubRules(Map json) {
+  return json.entries.map((entry) => SubRule(name: entry.key.toString())).toList();
 }
 
 @freezed

@@ -325,7 +325,7 @@ class CodeForge extends StatefulWidget {
     this.keyboardType = TextInputType.multiline,
     this.textDirection = TextDirection.ltr,
     this.tabSize,
-    this.useSpaceAsTab = false,
+    this.useSpaceAsTab = true,
     this.enableGutter = true,
     this.enableGutterDivider = false,
     this.enableMagnifier = true,
@@ -353,8 +353,8 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
   late final FocusNode _focusNode;
   late final AnimationController _caretBlinkController;
   late final AnimationController _lineHighlightController;
-  late final Map<String, TextStyle> _editorTheme;
-  late final Mode? _language;
+  late Map<String, TextStyle> _editorTheme;
+  late Mode? _language;
   late final CodeSelectionStyle _selectionStyle;
   late final GutterStyle _gutterStyle;
   late final SuggestionStyle _suggestionStyle;
@@ -394,6 +394,8 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
   final _actionScrollController = ScrollController();
   final Map<String, String> _suggestionDetailsCache = {};
   final _isMac = Platform.isMacOS;
+  final _isWindows = Platform.isWindows;
+  DateTime? _lastCtrlUpTime;
   final GlobalKey _codeFieldKey = GlobalKey();
   TextInputConnection? _connection;
   StreamSubscription? _lspResponsesSubscription;
@@ -473,7 +475,8 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
       _readOnly = true;
     }
 
-    if (widget._tabSize != _controller.tabSize) {
+    if ((_ownsController || widget.tabSize != null) &&
+        widget._tabSize != _controller.tabSize) {
       _controller.tabSize = widget._tabSize;
     }
 
@@ -1078,6 +1081,28 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
   }
 
   @override
+  void didUpdateWidget(covariant CodeForge oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if ((_ownsController || widget.tabSize != null) &&
+        widget._tabSize != _controller.tabSize) {
+      _controller.tabSize = widget._tabSize;
+    }
+    if (widget.useSpaceAsTab != _controller.useSpaceAsTab) {
+      _controller.useSpaceAsTab = widget.useSpaceAsTab;
+    }
+    if (widget.language != oldWidget.language) {
+      _language = widget.language ?? Mode();
+    }
+    if (widget.editorTheme != oldWidget.editorTheme) {
+      _editorTheme = widget.editorTheme ?? lightfairTheme;
+    }
+    if (widget.readOnly != oldWidget.readOnly) {
+      _readOnly = widget.readOnly;
+    }
+  }
+
+  @override
   void dispose() {
     _controller.removeListener(_controllerListener);
     _controller.semanticTokens.removeListener(_semanticTokensListener);
@@ -1160,27 +1185,7 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
   }
 
   void _moveSelectionRight(bool withShift) {
-    final sel = _controller.selection;
-    final textLength = _controller.length;
-
-    int newOffset;
-    if (!withShift && sel.start != sel.end) {
-      newOffset = sel.end;
-    } else if (sel.extentOffset < textLength) {
-      newOffset = sel.extentOffset + 1;
-    } else {
-      newOffset = textLength;
-    }
-
-    if (withShift) {
-      _controller.setSelectionSilently(
-        TextSelection(baseOffset: sel.baseOffset, extentOffset: newOffset),
-      );
-    } else {
-      _controller.setSelectionSilently(
-        TextSelection.collapsed(offset: newOffset),
-      );
-    }
+    _controller.pressRightArrowKey(isShiftPressed: withShift);
   }
 
   void _handleHomeKey(bool withShift) {
@@ -2449,23 +2454,51 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
                                                   }
                                                 }
 
-                                                if (event is KeyDownEvent ||
-                                                    event is KeyRepeatEvent) {
-                                                  final isAltPressed =
-                                                      HardwareKeyboard
-                                                          .instance
-                                                          .isAltPressed;
-                                                  final isShiftPressed =
-                                                      HardwareKeyboard
-                                                          .instance
-                                                          .isShiftPressed;
-                                                  final isCtrlPressed =
-                                                      HardwareKeyboard
-                                                          .instance
-                                                          .isControlPressed ||
-                                                      HardwareKeyboard
-                                                          .instance
-                                                          .isMetaPressed;
+                                                 if (_isWindows && event is KeyUpEvent) {
+                                                   if (event.logicalKey ==
+                                                           LogicalKeyboardKey
+                                                               .controlLeft ||
+                                                       event.logicalKey ==
+                                                           LogicalKeyboardKey
+                                                               .controlRight ||
+                                                       event.logicalKey ==
+                                                           LogicalKeyboardKey
+                                                               .control) {
+                                                     _lastCtrlUpTime =
+                                                         DateTime.now();
+                                                   }
+                                                 }
+
+                                                 if (event is KeyDownEvent ||
+                                                     event is KeyRepeatEvent) {
+                                                   final isAltPressed =
+                                                       HardwareKeyboard
+                                                           .instance
+                                                           .isAltPressed;
+                                                   final isShiftPressed =
+                                                       HardwareKeyboard
+                                                           .instance
+                                                           .isShiftPressed;
+                                                   final isCtrlPressed =
+                                                       HardwareKeyboard
+                                                           .instance
+                                                           .isControlPressed ||
+                                                       HardwareKeyboard
+                                                           .instance
+                                                           .isMetaPressed;
+                                                   final isSyntheticWindowsPaste =
+                                                       _isWindows &&
+                                                       event.logicalKey ==
+                                                           LogicalKeyboardKey
+                                                               .keyV &&
+                                                       _lastCtrlUpTime !=
+                                                           null &&
+                                                       DateTime.now()
+                                                               .difference(
+                                                                   _lastCtrlUpTime!) <=
+                                                           const Duration(
+                                                             milliseconds: 150,
+                                                           );
                                                   if (_suggestionNotifier
                                                               .value !=
                                                           null &&
@@ -2609,7 +2642,8 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
                                                     }
                                                   }
 
-                                                  if (isCtrlPressed) {
+                                                  if (isCtrlPressed ||
+                                                      isSyntheticWindowsPaste) {
                                                     switch (event.logicalKey) {
                                                       case LogicalKeyboardKey
                                                           .keyC:
@@ -2627,6 +2661,7 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
                                                             .handled;
                                                       case LogicalKeyboardKey
                                                           .keyV:
+                                                        _lastCtrlUpTime = null;
                                                         if (_readOnly) {
                                                           return KeyEventResult
                                                               .handled;
@@ -2805,7 +2840,11 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
                                                       _controller
                                                           .pressDownArrowKey(
                                                             isShiftPressed:
-                                                                isShiftPressed,
+                                                                isShiftPressed ||
+                                                                    (_isMobile &&
+                                                                        !_controller
+                                                                            .selection
+                                                                            .isCollapsed),
                                                           );
 
                                                       if (_controller
@@ -2813,7 +2852,11 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
                                                         _controller
                                                             .moveMultiCursorsDown(
                                                               isShiftPressed:
-                                                                  isShiftPressed,
+                                                                  isShiftPressed ||
+                                                                      (_isMobile &&
+                                                                          !_controller
+                                                                              .selection
+                                                                              .isCollapsed),
                                                             );
                                                       }
 
@@ -2826,7 +2869,11 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
                                                       _controller
                                                           .pressUpArrowKey(
                                                             isShiftPressed:
-                                                                isShiftPressed,
+                                                                isShiftPressed ||
+                                                                    (_isMobile &&
+                                                                        !_controller
+                                                                            .selection
+                                                                            .isCollapsed),
                                                           );
 
                                                       if (_controller
@@ -2834,7 +2881,11 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
                                                         _controller
                                                             .moveMultiCursorsUp(
                                                               isShiftPressed:
-                                                                  isShiftPressed,
+                                                                  isShiftPressed ||
+                                                                      (_isMobile &&
+                                                                          !_controller
+                                                                              .selection
+                                                                              .isCollapsed),
                                                             );
                                                       }
 
@@ -2845,7 +2896,11 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
                                                     case LogicalKeyboardKey
                                                         .arrowRight:
                                                       _handleArrowRight(
-                                                        isShiftPressed,
+                                                        isShiftPressed ||
+                                                            (_isMobile &&
+                                                                !_controller
+                                                                    .selection
+                                                                    .isCollapsed),
                                                       );
                                                       _commonKeyFunctions();
                                                       return KeyEventResult
@@ -2854,7 +2909,11 @@ class _CodeForgeState extends State<CodeForge> with TickerProviderStateMixin {
                                                     case LogicalKeyboardKey
                                                         .arrowLeft:
                                                       _handleArrowLeft(
-                                                        isShiftPressed,
+                                                        isShiftPressed ||
+                                                            (_isMobile &&
+                                                                !_controller
+                                                                    .selection
+                                                                    .isCollapsed),
                                                       );
                                                       _commonKeyFunctions();
                                                       return KeyEventResult
@@ -4592,6 +4651,7 @@ class _CodeField extends LeafRenderObjectWidget {
     }
     renderObject
       ..updateDiagnostics(diagnostics)
+      ..updateScreenWidth()
       ..editorTheme = editorTheme
       ..language = language
       ..extraLanguages = extraLanguages
@@ -4693,6 +4753,7 @@ class _CodeFieldRenderer extends RenderBox implements MouseTrackerAnnotation {
   Size? _lastImeEditableSize;
   double _imeComposingCaretDx = 0.0;
   double _imeComposingWidth = 0.0;
+  double _screenWidth = 0.0;
   int? _dragStartOffset;
   Timer? _selectionTimer, _hoverTimer, _showBubbleTimer;
   Offset? _pointerDownPosition;
@@ -4985,6 +5046,8 @@ class _CodeFieldRenderer extends RenderBox implements MouseTrackerAnnotation {
     }
   }
 
+  void updateScreenWidth() => _screenWidth = MediaQuery.sizeOf(context).width;
+
   ui.Paragraph _buildParagraph(String text, {double? width}) {
     final builder = ui.ParagraphBuilder(_paragraphStyle)
       ..pushStyle(_uiTextStyle)
@@ -5068,6 +5131,7 @@ class _CodeFieldRenderer extends RenderBox implements MouseTrackerAnnotation {
         _textStyle?.color ?? _editorTheme['root']?.color ?? Colors.black;
     final lineHeightMultiplier = _textStyle?.height ?? 1.2;
 
+    _screenWidth = MediaQuery.sizeOf(context).width;
     _lineHeight = fontSize * lineHeightMultiplier;
 
     _syntaxHighlighter = _language == null
@@ -12278,9 +12342,19 @@ class _CodeFieldRenderer extends RenderBox implements MouseTrackerAnnotation {
         }
 
         if (_selectionActive) {
+          int extentOffset = textOffset;
+          final contentWidth =
+              size.width - _gutterWidth - (innerPadding?.horizontal ?? 0);
+
+          if (localPosition.dx >= _screenWidth - 5 &&
+              (contentX + _gutterWidth).clamp(0, contentWidth) !=
+                  contentWidth) {
+            extentOffset += 8;
+          }
+
           final newSel = TextSelection(
             baseOffset: _dragStartOffset!,
-            extentOffset: textOffset,
+            extentOffset: extentOffset,
           );
           if (newSel != controller.selection) {
             controller.selection = newSel;

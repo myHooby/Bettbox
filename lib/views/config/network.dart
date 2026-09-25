@@ -112,14 +112,6 @@ class VpnSystemProxyItem extends ConsumerWidget {
       delegate: SwitchDelegate(
         value: systemProxy,
         onChanged: (bool value) async {
-          if (value) {
-            final res = await globalState.showMessage(
-              message: TextSpan(
-                text: appLocalizations.vpnSystemProxyConfirmDesc,
-              ),
-            );
-            if (res != true) return;
-          }
           ref
               .read(vpnSettingProvider.notifier)
               .updateState((state) => state.copyWith(systemProxy: value));
@@ -437,7 +429,7 @@ class MtuItem extends ConsumerWidget {
     );
 
     // Preset options
-    final presetOptions = [1480, 4064, 9000];
+    final presetOptions = [9000, 4064];
     final isCustom = !presetOptions.contains(mtu);
 
     return ListItem.options(
@@ -445,7 +437,7 @@ class MtuItem extends ConsumerWidget {
       subtitle: Text(isCustom ? '$mtu (${appLocalizations.custom})' : '$mtu'),
       delegate: OptionsDelegate<String>(
         value: isCustom ? 'custom' : '$mtu',
-        options: ['1480', '4064', '9000', 'custom'],
+        options: ['9000', '4064', 'custom'],
         textBuilder: (value) {
           if (value == 'custom') {
             return '${appLocalizations.custom}...';
@@ -501,6 +493,7 @@ class BypassDomainItem extends StatelessWidget {
                         (state) =>
                             state.copyWith(bypassDomain: defaultBypassDomain),
                       );
+                  await _handleNetworkConfigChange(ref);
                 },
                 tooltip: appLocalizations.reset,
                 icon: const Icon(Icons.replay),
@@ -518,12 +511,13 @@ class BypassDomainItem extends StatelessWidget {
               title: appLocalizations.bypassDomain,
               items: bypassDomain,
               titleBuilder: (item) => Text(item),
-              onChange: (items) {
+              onChange: (items) async {
                 ref
                     .read(networkSettingProvider.notifier)
                     .updateState(
                       (state) => state.copyWith(bypassDomain: List.from(items)),
                     );
+                await _handleNetworkConfigChange(ref);
               },
             );
           },
@@ -602,111 +596,82 @@ class BypassPrivateRouteItem extends ConsumerWidget {
     final bypassPrivateRoute = ref.watch(
       networkSettingProvider.select((state) => state.bypassPrivateRoute),
     );
-    if (!system.isDesktop) {
-      return ListItem.switchItem(
-        title: Text(appLocalizations.bypassPrivateRoute),
-        subtitle: Text(appLocalizations.bypassPrivateRouteDesc),
-        delegate: SwitchDelegate(
-          value: bypassPrivateRoute,
-          onChanged: (value) async {
-            ref
-                .read(networkSettingProvider.notifier)
-                .updateState(
-                  (state) => state.copyWith(bypassPrivateRoute: value),
-                );
-            await _handleNetworkConfigChange(ref);
-          },
-        ),
-      );
-    }
-    return InkWell(
-      onTap: () => _showEditPage(context, ref),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 8, top: 12, bottom: 12),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    appLocalizations.bypassPrivateRoute,
-                    style: context.textTheme.titleMedium?.copyWith(
-                      color: context.colorScheme.onSurface,
-                    ),
-                  ),
-                  Text(
-                    appLocalizations.bypassPrivateRouteDesc,
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      color: context.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
+    return ListItem.switchItem(
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(appLocalizations.bypassPrivateRoute),
+          if (system.isDesktop) ...[
+            const SizedBox(width: 6),
+            Tooltip(
+              message: appLocalizations.edit,
+              child: InkResponse(
+                radius: 16,
+                onTap: () => _showEditPage(context, ref),
+                child: Icon(
+                  Icons.settings_outlined,
+                  size: 18,
+                  color: context.colorScheme.onSurfaceVariant,
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Container(
-              width: 1,
-              height: 32,
-              color: context.colorScheme.outlineVariant.withValues(
-                alpha: context.colorScheme.brightness == Brightness.light
-                    ? 0.6
-                    : 0.4,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Switch(
-              value: bypassPrivateRoute,
-              onChanged: (value) async {
-                ref
-                    .read(networkSettingProvider.notifier)
-                    .updateState(
-                      (state) => state.copyWith(bypassPrivateRoute: value),
-                    );
-                await _handleNetworkConfigChange(ref);
-              },
             ),
           ],
-        ),
+        ],
+      ),
+      subtitle: Text(appLocalizations.bypassPrivateRouteDesc),
+      delegate: SwitchDelegate(
+        value: bypassPrivateRoute,
+        onChanged: (value) async {
+          ref
+              .read(networkSettingProvider.notifier)
+              .updateState(
+                (state) => state.copyWith(bypassPrivateRoute: value),
+              );
+          await _handleNetworkConfigChange(ref);
+        },
       ),
     );
   }
 }
 
-final networkItems = [
-  if (system.isAndroid) ...generateSection(items: const [VPNItem()]),
-  if (system.isAndroid)
-    ...generateSection(
-      title: 'VPN',
-      items: [const AllowBypassItem(), const VpnSystemProxyItem()],
-    ),
-  if (system.isDesktop)
-    ...generateSection(
-      title: appLocalizations.system,
-      items: [SystemProxyItem(), BypassDomainItem()],
-    ),
-  ...generateSection(
-    title: appLocalizations.options,
-    items: [
-      if (system.isDesktop) const TUNItem(),
-      if (system.isMacOS) const AutoSetSystemDnsItem(),
-      if (!system.isAndroid) const StrictRouteItem(),
-      const IcmpForwardingItem(),
-      const DnsHijackItem(),
-      const EndpointIndependentNatItem(),
-      const TunStackItem(),
-      const MtuItem(),
-      const BypassPrivateRouteItem(),
-    ],
-  ),
-];
-
-class NetworkListView extends StatelessWidget {
+class NetworkListView extends ConsumerWidget {
   const NetworkListView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vpnSystemProxy = system.isAndroid &&
+        ref.watch(vpnSettingProvider.select((state) => state.systemProxy));
+    final networkItems = [
+      if (system.isAndroid) ...generateSection(items: const [VPNItem()]),
+      if (system.isAndroid)
+        ...generateSection(
+          title: 'VPN',
+          items: [
+            const AllowBypassItem(),
+            const VpnSystemProxyItem(),
+            if (vpnSystemProxy) const BypassDomainItem(),
+          ],
+        ),
+      if (system.isDesktop)
+        ...generateSection(
+          title: appLocalizations.system,
+          items: const [SystemProxyItem(), BypassDomainItem()],
+        ),
+      ...generateSection(
+        title: appLocalizations.options,
+        items: [
+          if (system.isDesktop) const TUNItem(),
+          if (system.isMacOS) const AutoSetSystemDnsItem(),
+          if (!system.isAndroid) const StrictRouteItem(),
+          const IcmpForwardingItem(),
+          const DnsHijackItem(),
+          const EndpointIndependentNatItem(),
+          const TunStackItem(),
+          const MtuItem(),
+          const BypassPrivateRouteItem(),
+        ],
+      ),
+    ];
     return generateListView(networkItems);
   }
 }

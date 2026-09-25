@@ -143,6 +143,27 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
     await showScriptCustomOptions(context, ref, script: script);
   }
 
+  Future<void> _handleExportFile(Script script) async {
+    final res = await globalState.appController.safeRun<bool>(
+      () async {
+        final rawName = script.label.trim();
+        final fileName = rawName.endsWith('.js') ? rawName : '$rawName.js';
+        final value = await picker.saveFile(
+          fileName,
+          utf8.encode(script.content),
+          allowedExtensions: ['js'],
+        );
+        if (value == null) return false;
+        return true;
+      },
+      needLoading: true,
+      title: appLocalizations.tip,
+    );
+    if (res == true && mounted) {
+      context.showNotifier(appLocalizations.exportSuccess);
+    }
+  }
+
   void _handleShowScriptSettings() {
     showSheet(
       context: context,
@@ -230,6 +251,13 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
                               },
                             ),
                           PopupMenuItemData(
+                            icon: Icons.file_copy_outlined,
+                            label: appLocalizations.exportFile,
+                            onPressed: () {
+                              _handleExportFile(script);
+                            },
+                          ),
+                          PopupMenuItemData(
                             icon: Icons.delete,
                             label: appLocalizations.delete,
                             onPressed: () {
@@ -259,36 +287,15 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
     if (script != null && script.content != content) {
       JavaScriptRuntimeManager.invalidateCachedOptions(script.content);
     }
-    Script newScript =
-        script?.copyWith(label: title, content: content, url: url) ??
-        Script.create(label: title, content: content, url: url);
-    if (newScript.label.isEmpty) {
-      final res = await globalState.showCommonDialog<String>(
-        child: InputDialog(
-          title: appLocalizations.save,
-          value: '',
-          hintText: appLocalizations.pleaseEnterScriptName,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return appLocalizations.emptyTip(appLocalizations.name);
-            }
-            if (value != script?.label) {
-              final isExits = ref
-                  .read(scriptStateProvider.notifier)
-                  .isExits(value);
-              if (isExits) {
-                return appLocalizations.existsTip(appLocalizations.name);
-              }
-            }
-            return null;
-          },
-        ),
-      );
-      if (res == null || res.isEmpty) {
-        return;
-      }
-      newScript = newScript.copyWith(label: res);
+    var finalLabel = title.trim();
+    if (finalLabel.isEmpty) {
+      finalLabel = ref
+          .read(scriptStateProvider.notifier)
+          .getAvailableLabel(appLocalizations.unnamed);
     }
+    Script newScript =
+        script?.copyWith(label: finalLabel, content: content, url: url) ??
+        Script.create(label: finalLabel, content: content, url: url);
     if (newScript.label != script?.label) {
       final isExits = ref
           .read(scriptStateProvider.notifier)
