@@ -48,6 +48,7 @@ _AppSettingProps _$AppSettingPropsFromJson(
   disclaimerAccepted: json['disclaimerAccepted'] as bool? ?? false,
   minimizeOnExit: json['minimizeOnExit'] as bool? ?? true,
   hidden: json['hidden'] as bool? ?? false,
+  keepDockIcon: json['keepDockIcon'] as bool? ?? true,
   developerMode: json['developerMode'] as bool? ?? false,
   enableHighRefreshRate: json['enableHighRefreshRate'] as bool? ?? false,
   recoveryStrategy:
@@ -93,6 +94,7 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'disclaimerAccepted': instance.disclaimerAccepted,
       'minimizeOnExit': instance.minimizeOnExit,
       'hidden': instance.hidden,
+      'keepDockIcon': instance.keepDockIcon,
       'developerMode': instance.developerMode,
       'enableHighRefreshRate': instance.enableHighRefreshRate,
       'recoveryStrategy': _$RecoveryStrategyEnumMap[instance.recoveryStrategy]!,
@@ -143,6 +145,7 @@ const _$MediaPlatformEnumMap = {
   MediaPlatform.netflix: 'netflix',
   MediaPlatform.disney: 'disney',
   MediaPlatform.youtube: 'youtube',
+  MediaPlatform.youtubemusic: 'youtubemusic',
   MediaPlatform.spotify: 'spotify',
   MediaPlatform.tiktok: 'tiktok',
   MediaPlatform.iqiyi: 'iqiyi',
@@ -383,6 +386,7 @@ _ProxiesStyle _$ProxiesStyleFromJson(Map<String, dynamic> json) =>
       speedTestDuration: (json['speedTestDuration'] as num?)?.toInt() ?? 10,
       speedTestConcurrency:
           (json['speedTestConcurrency'] as num?)?.toInt() ?? 8,
+      autoStickyHeader: json['autoStickyHeader'] as bool? ?? true,
       showHiddenItems: json['showHiddenItems'] as bool? ?? false,
       hasCustomizedStyle: json['hasCustomizedStyle'] as bool? ?? false,
     );
@@ -400,6 +404,7 @@ Map<String, dynamic> _$ProxiesStyleToJson(_ProxiesStyle instance) =>
       'speedTestUrl': instance.speedTestUrl,
       'speedTestDuration': instance.speedTestDuration,
       'speedTestConcurrency': instance.speedTestConcurrency,
+      'autoStickyHeader': instance.autoStickyHeader,
       'showHiddenItems': instance.showHiddenItems,
       'hasCustomizedStyle': instance.hasCustomizedStyle,
     };

@@ -144,6 +144,52 @@ class HiddenItem extends ConsumerWidget {
   }
 }
 
+class KeepDockIconItem extends ConsumerWidget {
+  const KeepDockIconItem({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final keepDockIcon = ref.watch(
+      appSettingProvider.select((state) => state.keepDockIcon),
+    );
+    return ListItem.switchItem(
+      title: Text(appLocalizations.keepDockIcon),
+      subtitle: Text(appLocalizations.keepDockIconDesc),
+      delegate: SwitchDelegate(
+        value: keepDockIcon,
+        onChanged: (value) {
+          ref
+              .read(appSettingProvider.notifier)
+              .updateState((state) => state.copyWith(keepDockIcon: value));
+        },
+      ),
+    );
+  }
+}
+
+class ShowStartSwitchItem extends ConsumerWidget {
+  const ShowStartSwitchItem({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final showStartSwitch = ref.watch(
+      appSettingProvider.select((state) => state.showStartSwitch),
+    );
+    return ListItem.switchItem(
+      title: Text(appLocalizations.showStartSwitch),
+      subtitle: Text(appLocalizations.showStartSwitchDesc),
+      delegate: SwitchDelegate(
+        value: showStartSwitch,
+        onChanged: (value) {
+          ref
+              .read(appSettingProvider.notifier)
+              .updateState((state) => state.copyWith(showStartSwitch: value));
+        },
+      ),
+    );
+  }
+}
+
 class AlwaysShowTitleBarItem extends ConsumerWidget {
   const AlwaysShowTitleBarItem({super.key});
 
@@ -231,44 +277,13 @@ class ApplicationSettingView extends StatelessWidget {
         if (system.isWindows || system.isLinux)
           const AlwaysShowTitleBarItem(),
       ],
+      const ShowStartSwitchItem(),
       if (system.isAndroid) ...[NavBarHapticFeedbackItem()],
+      if (system.isMacOS) const KeepDockIconItem(),
       CloseConnectionsItem(),
       UsageItem(),
-      const SpeedTestConcurrencyItem(),
       AutoCheckUpdateItem(),
     ];
     return generateListView(generateSection(items: items));
-  }
-}
-
-// 网速测试并发设置:并发越高整组测完越快,但单节点读数因带宽平分而偏低
-class SpeedTestConcurrencyItem extends ConsumerWidget {
-  const SpeedTestConcurrencyItem({super.key});
-
-  static const _options = [1, 2, 4, 8, 16, 32, 64];
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final concurrency = ref.watch(
-      proxiesStyleSettingProvider.select((state) => state.speedTestConcurrency),
-    );
-
-    return ListItem<int>.options(
-      title: Text(appLocalizations.speedTestConcurrency),
-      subtitle: Text(appLocalizations.speedTestConcurrencyDesc),
-      delegate: OptionsDelegate(
-        title: appLocalizations.speedTestConcurrency,
-        options: _options,
-        value: concurrency,
-        textBuilder: (value) => '$value',
-        onChanged: (value) {
-          if (value != null) {
-            ref.read(proxiesStyleSettingProvider.notifier).updateState(
-                  (state) => state.copyWith(speedTestConcurrency: value),
-                );
-          }
-        },
-      ),
-    );
   }
 }

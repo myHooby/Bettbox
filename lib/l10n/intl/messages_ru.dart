@@ -88,6 +88,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "addTunnel": MessageLookupByLibrary.simpleMessage(
       "Добавить перенаправление",
     ),
+    "addUser": MessageLookupByLibrary.simpleMessage("Добавить пользователя"),
     "addedOriginRules": MessageLookupByLibrary.simpleMessage(
       "Добавить к исходным правилам",
     ),
@@ -177,6 +178,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "autoScroll": MessageLookupByLibrary.simpleMessage("Автопрокрутка"),
     "autoSetSystemDns": MessageLookupByLibrary.simpleMessage(
       "Автоматически настроить системный DNS",
+    ),
+    "autoStickyHeader": MessageLookupByLibrary.simpleMessage(
+      "Автозакрепление заголовка",
     ),
     "autoUpdate": MessageLookupByLibrary.simpleMessage("Автообновление"),
     "autoUpdateInterval": MessageLookupByLibrary.simpleMessage(
@@ -434,6 +438,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "editTunnel": MessageLookupByLibrary.simpleMessage(
       "Изменить перенаправление",
     ),
+    "editUser": MessageLookupByLibrary.simpleMessage(
+      "Редактировать пользователя",
+    ),
     "emptyTip": m3,
     "enableCrashReport": MessageLookupByLibrary.simpleMessage("Анализ сбоев"),
     "enableCrashReportDesc": MessageLookupByLibrary.simpleMessage(
@@ -631,6 +638,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "iconConfiguration": MessageLookupByLibrary.simpleMessage(
       "Настройка иконки",
     ),
+    "iconConfigurationDesc": MessageLookupByLibrary.simpleMessage(
+      "Настройка значков ICON групп прокси",
+    ),
     "iconStyle": MessageLookupByLibrary.simpleMessage("Стиль иконок"),
     "import": MessageLookupByLibrary.simpleMessage("Импорт"),
     "importFailed": MessageLookupByLibrary.simpleMessage("Ошибка импорта"),
@@ -666,6 +676,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "just": MessageLookupByLibrary.simpleMessage("Только что"),
     "keepAliveIntervalDesc": MessageLookupByLibrary.simpleMessage(
       "Интервал TCP keep-alive",
+    ),
+    "keepDockIcon": MessageLookupByLibrary.simpleMessage("Закрепить в Dock"),
+    "keepDockIconDesc": MessageLookupByLibrary.simpleMessage(
+      "Сохранять иконку приложения в Dock",
     ),
     "key": MessageLookupByLibrary.simpleMessage("Ключ"),
     "language": MessageLookupByLibrary.simpleMessage("Язык"),
@@ -801,6 +815,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "networkType": MessageLookupByLibrary.simpleMessage("Тип сети"),
     "neutralScheme": MessageLookupByLibrary.simpleMessage("Нейтральный"),
     "noAnimation": MessageLookupByLibrary.simpleMessage("По умолчанию"),
+    "noBackupFileFound": MessageLookupByLibrary.simpleMessage(
+      "Файл резервной копии не найден",
+    ),
     "noData": MessageLookupByLibrary.simpleMessage("Нет данных"),
     "noHotKey": MessageLookupByLibrary.simpleMessage("Нет горячих клавиш"),
     "noIcon": MessageLookupByLibrary.simpleMessage("Без иконок"),
@@ -1155,6 +1172,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Пароль скопирован в буфер обмена",
     ),
     "selectAll": MessageLookupByLibrary.simpleMessage("Выбрать все"),
+    "selectBackupVersion": MessageLookupByLibrary.simpleMessage(
+      "Выберите версию резервной копии",
+    ),
     "selected": MessageLookupByLibrary.simpleMessage("Выбрано"),
     "selectedCountTitle": m13,
     "serviceReady": MessageLookupByLibrary.simpleMessage("Служба готова"),
@@ -1179,6 +1199,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "skipDomain": MessageLookupByLibrary.simpleMessage("Пропустить домены"),
     "skipDstAddress": MessageLookupByLibrary.simpleMessage(
       "Пропустить IP назначения",
+    ),
+    "skipLocalAuth": MessageLookupByLibrary.simpleMessage(
+      "Пропустить локальную аутентификацию",
+    ),
+    "skipLocalAuthDesc": MessageLookupByLibrary.simpleMessage(
+      "Разрешить локальному устройству доступ к прокси без учетных данных",
     ),
     "skipSrcAddress": MessageLookupByLibrary.simpleMessage(
       "Пропустить IP источника",
@@ -1424,6 +1450,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Использовать системные hosts",
+    ),
+    "userAuth": MessageLookupByLibrary.simpleMessage(
+      "Аутентификация пользователей",
+    ),
+    "userAuthEmpty": MessageLookupByLibrary.simpleMessage(
+      "Пользователи аутентификации не настроены, подключение по LAN не требует учетных данных",
+    ),
+    "username": MessageLookupByLibrary.simpleMessage("Имя пользователя"),
+    "usernameCannotContainColon": MessageLookupByLibrary.simpleMessage(
+      "Имя пользователя не может содержать двоеточие",
     ),
     "value": MessageLookupByLibrary.simpleMessage("Значение"),
     "vibrantScheme": MessageLookupByLibrary.simpleMessage("Яркий"),
