@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
@@ -95,6 +96,29 @@ class GlobalState {
     return widgets.contains(DashboardWidget.networkDetection);
   }
 
+  String getCurrentNodeSignature() {
+    final profileId = config.currentProfileId ?? '';
+    final mode = config.patchClashConfig.mode.name;
+    final selectedMap = config.currentProfile?.selectedMap ?? {};
+    final sortedEntries = selectedMap.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    final selectedStr =
+        sortedEntries.map((e) => '${e.key}:${e.value}').join(';');
+    String activeGroupsStr = '';
+    if (isInit && _appController != null) {
+      try {
+        final groups = appController.ref.read(groupsProvider);
+        if (groups.isNotEmpty) {
+          final sortedGroups = groups.toList()
+            ..sort((a, b) => a.name.compareTo(b.name));
+          activeGroupsStr =
+              sortedGroups.map((g) => '${g.name}:${g.realNow}').join(';');
+        }
+      } catch (_) {}
+    }
+    return '$profileId|$mode|$selectedStr|$activeGroupsStr';
+  }
+
   bool get isStart => startTime != null && startTime!.isBeforeNow;
 
   AppController get appController => _appController!;
@@ -123,7 +147,7 @@ class GlobalState {
       version: version,
       viewSize: Size.zero,
       requests: FixedList(maxLength),
-      logs: FixedList(maxLength),
+      logs: FixedList(maxLogLength),
       traffics: FixedList(30),
       totalTraffic: Traffic(),
       systemUiOverlayStyle: const SystemUiOverlayStyle(),
@@ -140,10 +164,13 @@ class GlobalState {
 
   Future<String?> _calcCoreSHA256() async {
     try {
-      final file = File(appPath.corePath);
+      final path = appPath.corePath;
+      final file = File(path);
       if (!await file.exists()) return null;
-      final digest = await sha256.bind(file.openRead()).first;
-      return digest.toString();
+      return await Isolate.run(() async {
+        final digest = await sha256.bind(File(path).openRead()).first;
+        return digest.toString();
+      });
     } catch (e) {
       commonPrint.log('Failed to calculate core SHA256: $e');
       return null;
@@ -469,13 +496,11 @@ class GlobalState {
           parent: animation,
           curve: Curves.easeOutCubic,
         );
-        return RepaintBoundary(
-          child: FadeTransition(
-            opacity: curved,
-            child: ScaleTransition(
-              scale: curved.drive(Tween<double>(begin: 0.94, end: 1.0)),
-              child: child,
-            ),
+        return FadeTransition(
+          opacity: curved,
+          child: ScaleTransition(
+            scale: curved.drive(Tween<double>(begin: 0.94, end: 1.0)),
+            child: RepaintBoundary(child: child),
           ),
         );
       },
@@ -608,15 +633,40 @@ class GlobalState {
   Future<void> _writeRunningConfig(Map<String, dynamic> clashConfig) async {
     final content = await encodeCompactYamlTask(clashConfig);
     final configPath = await appPath.configFilePath;
-    final tempFile = File('$configPath.${DateTime.now().microsecondsSinceEpoch}.tmp');
+    final tempFile =
+        File('$configPath.${DateTime.now().microsecondsSinceEpoch}.tmp');
     await tempFile.parent.create(recursive: true);
-    await tempFile.writeAsString(content, flush: true);
     try {
-      await tempFile.rename(configPath);
-    } catch (_) {
+      await tempFile.writeAsString(content, flush: true);
+      var success = false;
+      for (var attempt = 0; attempt < 3; attempt++) {
+        try {
+          await tempFile.rename(configPath);
+          success = true;
+          break;
+        } catch (_) {
+          try {
+            await tempFile.copy(configPath);
+            success = true;
+            break;
+          } catch (_) {
+            if (attempt < 2) {
+              await Future.delayed(Duration(milliseconds: 50 * (attempt + 1)));
+            }
+          }
+        }
+      }
+      if (!success) {
+        throw FileSystemException(
+          'Failed to write running config after retries',
+          configPath,
+        );
+      }
+    } finally {
       if (await tempFile.exists()) {
-        await tempFile.copy(configPath);
-        await tempFile.delete();
+        try {
+          await tempFile.delete();
+        } catch (_) {}
       }
     }
   }
@@ -705,6 +755,8 @@ class GlobalState {
         ? const ['any:53']
         : dnsHijack;
     rawConfig['tun']['stack'] = realPatchConfig.tun.stack.name;
+    rawConfig['tun']['congestion-controller'] =
+        realPatchConfig.tun.congestionController.name;
     rawConfig['tun']['route-address'] = realPatchConfig.tun.routeAddress;
     rawConfig['tun']['route-exclude-address'] =
         realPatchConfig.tun.routeExcludeAddress;
@@ -1192,6 +1244,7 @@ class DetectionState {
   bool _isIpMasked = false;
   IpInfo? _rawIpInfo;
   bool _isFirstLaunch = true;
+  String? _lastCheckedNodeSignature;
 
   final state = ValueNotifier<NetworkDetectionState>(
     const NetworkDetectionState(
@@ -1237,6 +1290,7 @@ class DetectionState {
   void _onIpProgress(int requestId, IpInfo info) {
     if (requestId != _requestId) return;
     _rawIpInfo = info;
+    _lastCheckedNodeSignature = globalState.getCurrentNodeSignature();
     state.value = state.value.copyWith(
       isLoading: false,
       ipInfo: _maskIpInfo(_rawIpInfo),
@@ -1289,11 +1343,24 @@ class DetectionState {
   }
 
   void tryStartCheck() {
+    if (!globalState.hasNetworkDetectionWidget) return;
     if (!state.value.isLoading &&
         state.value.ipInfo == null &&
         (_preIsStart == null || state.value.errorMessage != null)) {
       startCheck();
     }
+  }
+
+  void checkOnForegroundResume() {
+    if (!globalState.hasNetworkDetectionWidget) return;
+    final currentSignature = globalState.getCurrentNodeSignature();
+    if (state.value.ipInfo != null &&
+        _lastCheckedNodeSignature == currentSignature &&
+        state.value.errorMessage == null) {
+      return;
+    }
+    _lastCheckedNodeSignature = currentSignature;
+    startCheck(showLoading: state.value.ipInfo == null);
   }
 
   void _cancelPreviousRequest() {
@@ -1324,7 +1391,8 @@ class DetectionState {
     }
 
     if (res.data != null) {
-      _rawIpInfo ??= res.data;
+      _rawIpInfo = res.data;
+      _lastCheckedNodeSignature = globalState.getCurrentNodeSignature();
     }
     state.value = state.value.copyWith(
       isLoading: false,
@@ -1369,7 +1437,7 @@ class DetectionState {
       );
     }
 
-    final timeout = const Duration(seconds: 5);
+    final timeout = const Duration(seconds: 8);
 
     final res = isStart
         ? await request.checkIp(
@@ -1413,26 +1481,7 @@ class MediaUnlockStateNotifier {
   bool? _preIsStart;
 
   String _getNodeSignature() {
-    final profileId = globalState.config.currentProfileId ?? '';
-    final mode = globalState.config.patchClashConfig.mode.name;
-    final selectedMap = globalState.config.currentProfile?.selectedMap ?? {};
-    final sortedEntries = selectedMap.entries.toList()
-      ..sort((a, b) => a.key.compareTo(b.key));
-    final selectedStr =
-        sortedEntries.map((e) => '${e.key}:${e.value}').join(';');
-    String activeGroupsStr = '';
-    if (globalState.isInit) {
-      try {
-        final groups = globalState.appController.ref.read(groupsProvider);
-        if (groups.isNotEmpty) {
-          final sortedGroups = groups.toList()
-            ..sort((a, b) => a.name.compareTo(b.name));
-          activeGroupsStr =
-              sortedGroups.map((g) => '${g.name}:${g.realNow}').join(';');
-        }
-      } catch (_) {}
-    }
-    return '$profileId|$mode|$selectedStr|$activeGroupsStr';
+    return globalState.getCurrentNodeSignature();
   }
 
   final state = ValueNotifier<MediaUnlockState>(
@@ -1654,8 +1703,13 @@ class MediaUnlockStateNotifier {
     bool force = false,
     List<MediaPlatform>? platforms,
   }) {
-    final targets = platforms ?? MediaPlatform.values;
-    final isFull = targets.length >= MediaPlatform.values.length;
+    final showMoreStreaming =
+        globalState.config.appSetting.mediaUnlockMoreStreamingPlatforms;
+    final allAvailable = MediaPlatform.values
+        .where((p) => showMoreStreaming || !moreStreamingPlatforms.contains(p))
+        .toList();
+    final targets = platforms ?? allAvailable;
+    final isFull = targets.length >= allAvailable.length;
     checkPlatforms(
       targets,
       force: force,
@@ -1733,6 +1787,30 @@ class MediaUnlockStateNotifier {
       );
       checkPinned(force: true);
     });
+  }
+
+  void checkOnForegroundResume() {
+    final isRunning = globalState.appState.runTime != null;
+    if (!isRunning) return;
+    if (!globalState.hasMediaUnlockWidget) return;
+    if (!globalState.config.appSetting.mediaUnlockRefreshOnNodeChange) return;
+    final currentSignature = globalState.getCurrentNodeSignature();
+    if (state.value.results.isNotEmpty &&
+        _lastCheckedNodeSignature == currentSignature) {
+      return;
+    }
+    _lastCheckedNodeSignature = currentSignature;
+    final nextResults =
+        Map<MediaPlatform, MediaUnlockResult>.from(state.value.results);
+    for (final p in pinnedPlatforms) {
+      nextResults.remove(p);
+    }
+    state.value = state.value.copyWith(
+      results: nextResults,
+      testingPlatforms: {},
+      isLoading: false,
+    );
+    checkPinned(force: true);
   }
 
   void tryStartCheck() {
