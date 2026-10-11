@@ -502,6 +502,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "logsTest": MessageLookupByLibrary.simpleMessage("日志测试"),
     "loopback": MessageLookupByLibrary.simpleMessage("回环解锁工具"),
     "loopbackDesc": MessageLookupByLibrary.simpleMessage("用于 UWP 回环解锁"),
+    "loopbackProtection": MessageLookupByLibrary.simpleMessage("回环保护"),
+    "loopbackProtectionDesc": MessageLookupByLibrary.simpleMessage(
+      "阻断网络错误引起的回环流量",
+    ),
     "loose": MessageLookupByLibrary.simpleMessage("宽松"),
     "manualRefreshIp": MessageLookupByLibrary.simpleMessage("重新获取 IP"),
     "maximize": MessageLookupByLibrary.simpleMessage("最大化"),
@@ -555,9 +559,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "nameserverDesc": MessageLookupByLibrary.simpleMessage("用于解析域名"),
     "nameserverPolicy": MessageLookupByLibrary.simpleMessage("域名服务器策略"),
     "nameserverPolicyDesc": MessageLookupByLibrary.simpleMessage("指定对应域名服务器策略"),
-    "navBarHapticFeedback": MessageLookupByLibrary.simpleMessage("触感反馈"),
+    "navBarHapticFeedback": MessageLookupByLibrary.simpleMessage("动画反馈"),
     "navBarHapticFeedbackDesc": MessageLookupByLibrary.simpleMessage(
-      "底部导航栏切换震动反馈",
+      "底部导航栏动画及震动反馈",
     ),
     "navConnections": MessageLookupByLibrary.simpleMessage("连接"),
     "navTools": MessageLookupByLibrary.simpleMessage("更多"),

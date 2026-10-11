@@ -722,6 +722,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "loopbackDesc": MessageLookupByLibrary.simpleMessage(
       "Инструмент для разблокировки UWP loopback",
     ),
+    "loopbackProtection": MessageLookupByLibrary.simpleMessage(
+      "Защита от закольцовки",
+    ),
+    "loopbackProtectionDesc": MessageLookupByLibrary.simpleMessage(
+      "Блокировать закольцованный трафик из-за ошибок сети",
+    ),
     "loose": MessageLookupByLibrary.simpleMessage("Максимальная"),
     "manualRefreshIp": MessageLookupByLibrary.simpleMessage("Обновить IP"),
     "maximize": MessageLookupByLibrary.simpleMessage("Развернуть"),
@@ -796,10 +802,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Указать политику DNS для конкретных доменов",
     ),
     "navBarHapticFeedback": MessageLookupByLibrary.simpleMessage(
-      "Тактильная отдача",
+      "Анимация и отклик",
     ),
     "navBarHapticFeedbackDesc": MessageLookupByLibrary.simpleMessage(
-      "Вибрация при переключении нижней панели навигации",
+      "Анимация нижней панели навигации и тактильный отклик",
     ),
     "navConnections": MessageLookupByLibrary.simpleMessage("Соединения"),
     "navTools": MessageLookupByLibrary.simpleMessage("Еще"),

@@ -556,6 +556,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "logsTest": MessageLookupByLibrary.simpleMessage("ログテスト"),
     "loopback": MessageLookupByLibrary.simpleMessage("ループバック解除ツール"),
     "loopbackDesc": MessageLookupByLibrary.simpleMessage("UWPアプリのループバック制限を解除"),
+    "loopbackProtection": MessageLookupByLibrary.simpleMessage("ループバック保護"),
+    "loopbackProtectionDesc": MessageLookupByLibrary.simpleMessage(
+      "ネットワークエラーによるループバックを遮断",
+    ),
     "loose": MessageLookupByLibrary.simpleMessage("ルーズ"),
     "manualRefreshIp": MessageLookupByLibrary.simpleMessage("IPを再取得"),
     "maximize": MessageLookupByLibrary.simpleMessage("最大化"),
@@ -613,9 +617,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "nameserverPolicyDesc": MessageLookupByLibrary.simpleMessage(
       "特定ドメイン用のDNSポリシーを指定",
     ),
-    "navBarHapticFeedback": MessageLookupByLibrary.simpleMessage("触覚フィードバック"),
+    "navBarHapticFeedback": MessageLookupByLibrary.simpleMessage(
+      "アニメーションフィードバック",
+    ),
     "navBarHapticFeedbackDesc": MessageLookupByLibrary.simpleMessage(
-      "ボトムナビゲーション切り替え時の振動フィードバック",
+      "ボトムナビゲーションのアニメーションおよび振動フィードバック",
     ),
     "navConnections": MessageLookupByLibrary.simpleMessage("接続"),
     "navTools": MessageLookupByLibrary.simpleMessage("ツール"),

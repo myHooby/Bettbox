@@ -699,6 +699,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "loopbackDesc": MessageLookupByLibrary.simpleMessage(
       "UWP loopback unlocking tool",
     ),
+    "loopbackProtection": MessageLookupByLibrary.simpleMessage(
+      "Loopback Protection",
+    ),
+    "loopbackProtectionDesc": MessageLookupByLibrary.simpleMessage(
+      "Block loopback traffic from network errors",
+    ),
     "loose": MessageLookupByLibrary.simpleMessage("Loose"),
     "manualRefreshIp": MessageLookupByLibrary.simpleMessage("Refresh IP"),
     "maximize": MessageLookupByLibrary.simpleMessage("Maximize"),
@@ -771,10 +777,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Specify domain-specific nameservers",
     ),
     "navBarHapticFeedback": MessageLookupByLibrary.simpleMessage(
-      "Haptic Feedback",
+      "Animation Feedback",
     ),
     "navBarHapticFeedbackDesc": MessageLookupByLibrary.simpleMessage(
-      "Vibrate on navigation tab switch",
+      "Bottom navigation bar animation and haptic feedback",
     ),
     "navConnections": MessageLookupByLibrary.simpleMessage("Active"),
     "navTools": MessageLookupByLibrary.simpleMessage("More"),

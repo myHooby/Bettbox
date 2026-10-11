@@ -705,6 +705,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "loopbackDesc": MessageLookupByLibrary.simpleMessage(
       "رفع محدودیت Loopback برای برنامه‌های UWP",
     ),
+    "loopbackProtection": MessageLookupByLibrary.simpleMessage(
+      "محافظت در برابر لوپ‌بک",
+    ),
+    "loopbackProtectionDesc": MessageLookupByLibrary.simpleMessage(
+      "مسدودسازی ترافیک لوپ‌بک ناشی از خطای شبکه",
+    ),
     "loose": MessageLookupByLibrary.simpleMessage("باز"),
     "manualRefreshIp": MessageLookupByLibrary.simpleMessage("دریافت مجدد IP"),
     "maximize": MessageLookupByLibrary.simpleMessage("بزرگ کردن"),
@@ -777,10 +783,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "تعیین سیاست DNS برای دامنه‌ها",
     ),
     "navBarHapticFeedback": MessageLookupByLibrary.simpleMessage(
-      "بازخورد لمسی",
+      "بازخورد انیمیشن",
     ),
     "navBarHapticFeedbackDesc": MessageLookupByLibrary.simpleMessage(
-      "لرزش هنگام تغییر زبانه‌های نوار پایین",
+      "انیمیشن نوار ناوبری پایین و بازخورد لمسی",
     ),
     "navConnections": MessageLookupByLibrary.simpleMessage("اتصالات"),
     "navTools": MessageLookupByLibrary.simpleMessage("ابزارها"),
