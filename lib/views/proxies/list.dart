@@ -375,6 +375,34 @@ class _GroupHeader extends ConsumerWidget {
                 ],
               ),
             ),
+            // 收起状态下也保留网速测试入口,不受展开折叠影响
+            AnimatedBuilder(
+              animation: speedTestCoordinator,
+              builder: (_, _) {
+                final isSpeedTestingThisGroup = speedTestCoordinator
+                    .isTestingGroup(group.name);
+                return SizedBox.square(
+                  dimension: 40,
+                  child: IconButton(
+                    visualDensity: VisualDensity.compact,
+                    icon: isSpeedTestingThisGroup
+                        ? const SizedBox.square(
+                            dimension: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.speed),
+                    onPressed: speedTestCoordinator.isTesting
+                        ? null
+                        : () => showGroupSpeedTestSheet(
+                            context,
+                            group.all,
+                            groupName: group.name,
+                          ),
+                    tooltip: appLocalizations.speedTest,
+                  ),
+                );
+              },
+            ),
             _ExpandableGroupActions(
               isExpand: isExpand,
               child: Row(
