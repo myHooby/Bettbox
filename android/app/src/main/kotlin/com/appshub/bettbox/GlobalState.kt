@@ -10,6 +10,7 @@ import com.appshub.bettbox.plugins.ServicePlugin
 import com.appshub.bettbox.plugins.TilePlugin
 import com.appshub.bettbox.plugins.VpnPlugin
 import com.appshub.bettbox.services.BettboxTileService
+import com.appshub.bettbox.widget.HomeWidgets
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor
@@ -66,6 +67,9 @@ object GlobalState {
     var isSmartStopped = false
 
     @Volatile
+    var smartStopOverride = false
+
+    @Volatile
     var isStopping = false
 
     @Volatile
@@ -98,14 +102,8 @@ object GlobalState {
         }
         currentRunState = newState
         _runState.value = newState
-        // 小组件跟随运行状态刷新:停止时图标复位并把速度归零
-        runCatching {
-            com.appshub.bettbox.receivers.BettboxWidgetProvider.onRunStateChanged(
-                BettboxApplication.getAppContext(),
-                newState != RunState.STOP,
-            )
-        }
         requestTileUpdate()
+        mainHandler.post { HomeWidgets.refreshAll(BettboxApplication.getAppContext()) }
     }
 
     private val tileRetryRunnable = Runnable {
@@ -283,6 +281,12 @@ object GlobalState {
     }
 
     fun isServiceEngineRunning(): Boolean = serviceEngine != null
+
+    fun notifyLowMemory() {
+        runCatching {
+            (flutterEngine ?: serviceEngine)?.dartExecutor?.notifyLowMemoryWarning()
+        }
+    }
 
     fun reconnectIpc() {
         (serviceEngine?.plugins?.get(TilePlugin::class.java) as? TilePlugin)?.handleReconnectIpc()

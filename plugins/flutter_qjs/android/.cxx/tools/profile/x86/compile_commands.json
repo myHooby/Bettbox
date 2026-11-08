@@ -1,0 +1,27 @@
+[
+{
+  "directory": "/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/android/.cxx/Debug/v3d2u6m5/x86",
+  "command": "/Users/cys/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=i686-none-linux-android21 --sysroot=/Users/cys/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC -DCONFIG_VERSION=\\\"2026-06-14\\\" -DDUMP_LEAKS -o CMakeFiles/quickjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/cutils.c.o -c /Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/cutils.c",
+  "file": "/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/cutils.c"
+},
+{
+  "directory": "/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/android/.cxx/Debug/v3d2u6m5/x86",
+  "command": "/Users/cys/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=i686-none-linux-android21 --sysroot=/Users/cys/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC -DCONFIG_VERSION=\\\"2026-06-14\\\" -DDUMP_LEAKS -o CMakeFiles/quickjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/libregexp.c.o -c /Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/libregexp.c",
+  "file": "/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/libregexp.c"
+},
+{
+  "directory": "/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/android/.cxx/Debug/v3d2u6m5/x86",
+  "command": "/Users/cys/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=i686-none-linux-android21 --sysroot=/Users/cys/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC -DCONFIG_VERSION=\\\"2026-06-14\\\" -DDUMP_LEAKS -o CMakeFiles/quickjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/libunicode.c.o -c /Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/libunicode.c",
+  "file": "/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/libunicode.c"
+},
+{
+  "directory": "/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/android/.cxx/Debug/v3d2u6m5/x86",
+  "command": "/Users/cys/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=i686-none-linux-android21 --sysroot=/Users/cys/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -fno-limit-debug-info  -fPIC -DCONFIG_VERSION=\\\"2026-06-14\\\" -DDUMP_LEAKS -o CMakeFiles/quickjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/quickjs.c.o -c /Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/quickjs.c",
+  "file": "/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/quickjs.c"
+},
+{
+  "directory": "/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/android/.cxx/Debug/v3d2u6m5/x86",
+  "command": "/Users/cys/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android21 --sysroot=/Users/cys/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dqjs_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/qjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/ffi.cpp.o -c /Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/ffi.cpp",
+  "file": "/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/ffi.cpp"
+}
+]

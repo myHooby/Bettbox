@@ -1,0 +1,69 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "quickjs",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "qjs::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-qjs-Debug-1a6bf1dd10a2d6683600.json",
+					"name" : "qjs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "quickjs::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-quickjs-Debug-da9794b5dbed392a7dd4.json",
+					"name" : "quickjs",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/android/.cxx/Debug/v3d2u6m5/arm64-v8a",
+		"source" : "/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/android/src/main/cxx"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

@@ -1,0 +1,13 @@
+# ninja log v5
+0	77	1787411622500810354	CMakeFiles/quickjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/cutils.c.o	6dbe1ff1432fedeb
+0	143	1787411622567392643	CMakeFiles/quickjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/libunicode.c.o	666b8dc6b2cf7e79
+0	228	1787411622651066859	CMakeFiles/quickjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/libregexp.c.o	de585a3db280b5fc
+0	266	1787411622689204214	CMakeFiles/qjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/ffi.cpp.o	63bfbcc223b7a8e0
+0	5446	1787411627846986518	CMakeFiles/quickjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/quickjs.c.o	b9922bf4606c8088
+5446	5474	1787411627900349000	libquickjs.a	cd5d3da52fbcabfe
+5474	5506	1787411627928463108	/Users/cys/IdeaProjects/Bettbox/build/flutter_qjs/intermediates/cxx/RelWithDebInfo/57313r1t/obj/x86_64/libqjs.so	dfa842bfc1971a5b
+3	71	1788533358358750061	/Users/cys/IdeaProjects/Bettbox/build/flutter_qjs/intermediates/cxx/RelWithDebInfo/57313r1t/obj/x86_64/libqjs.so	dfa842bfc1971a5b
+3	268	1790338984251263443	CMakeFiles/qjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/ffi.cpp.o	63bfbcc223b7a8e0
+268	323	1790338984300400219	/Users/cys/IdeaProjects/Bettbox/build/flutter_qjs/intermediates/cxx/RelWithDebInfo/57313r1t/obj/x86_64/libqjs.so	dfa842bfc1971a5b
+7	81	1790476846473131148	/Users/cys/IdeaProjects/Bettbox/build/flutter_qjs/intermediates/cxx/RelWithDebInfo/57313r1t/obj/x86_64/libqjs.so	dfa842bfc1971a5b
+5	65	1791012261256741680	/Users/cys/IdeaProjects/Bettbox/build/flutter_qjs/intermediates/cxx/RelWithDebInfo/57313r1t/obj/x86_64/libqjs.so	dfa842bfc1971a5b

@@ -1,0 +1,4 @@
+/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/android/.cxx/RelWithDebInfo/57313r1t/x86/CMakeFiles/quickjs.dir
+/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/android/.cxx/RelWithDebInfo/57313r1t/x86/CMakeFiles/qjs.dir
+/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/android/.cxx/RelWithDebInfo/57313r1t/x86/CMakeFiles/edit_cache.dir
+/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/android/.cxx/RelWithDebInfo/57313r1t/x86/CMakeFiles/rebuild_cache.dir

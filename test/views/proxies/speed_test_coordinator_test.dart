@@ -1,4 +1,3 @@
-import 'package:bett_box/models/models.dart';
 import 'package:bett_box/views/proxies/common.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -55,46 +54,4 @@ void main() {
     });
   });
 
-  group('SpeedResult 与 SpeedTestProgress 解析', () {
-    test('SpeedResult 正常解析', () {
-      final result = SpeedResult.fromJson({
-        'name': 'node-a',
-        'url': 'https://speed.cloudflare.com/__down?bytes=104857600',
-        'speed': 1310720.5,
-        'bytes': 13107205,
-        'duration': 10000,
-      });
-
-      expect(result.name, 'node-a');
-      expect(result.speed, 1310720.5);
-      expect(result.bytes, 13107205);
-      expect(result.duration, 10000);
-    });
-
-    test('SpeedResult 缺省字段回落默认值', () {
-      final result = SpeedResult.fromJson({
-        'name': 'node-a',
-        'url': 'https://example.com',
-      });
-
-      expect(result.speed, 0);
-      expect(result.bytes, 0);
-      expect(result.duration, 0);
-    });
-
-    test('SpeedTestProgress 正常解析', () {
-      final progress = SpeedTestProgress.fromJson({
-        'name': 'node-a',
-        'url': 'https://example.com',
-        'speed': 2048.0,
-        'bytes': 20480,
-        'elapsed': 10000,
-      });
-
-      expect(progress.name, 'node-a');
-      expect(progress.speed, 2048.0);
-      expect(progress.bytes, 20480);
-      expect(progress.elapsed, 10000);
-    });
-  });
 }

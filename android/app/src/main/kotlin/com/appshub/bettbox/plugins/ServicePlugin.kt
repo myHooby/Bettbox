@@ -22,18 +22,18 @@ class ServicePlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         private val gson = Gson()
         private const val TAG = "ServicePlugin"
 
-        private fun notify(method: String) {
+        private fun notify(method: String, arguments: Any? = null) {
             mainHandler.post {
                 activeChannels.forEach { ch ->
-                    runCatching { ch.invokeMethod(method, null) }
+                    runCatching { ch.invokeMethod(method, arguments) }
                         .onFailure { Log.e(TAG, "$method notify error: ${it.message}") }
                 }
             }
         }
 
         fun notifyNetworkChanged() = notify("networkChanged")
-        fun notifyQuickResponse() = notify("quickResponse")
         fun notifyVpnStartFailed() = notify("vpnStartFailed")
+        fun notifyScreenStateChanged(isOn: Boolean) = notify("screenStateChanged", isOn)
         fun notifyRunStateChanged(state: RunState) {
             mainHandler.post {
                 activeChannels.forEach { ch ->
@@ -63,28 +63,21 @@ class ServicePlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 VpnPlugin.handleStop(force = true)
                 result.success(true)
             }
-            "smartStop" -> {
-                VpnPlugin.handleSmartStop()
-                result.success(true)
-            }
-            "smartResume" -> {
-                val data = call.argument<String>("data")
-                val options = gson.fromJson(data, VpnOptions::class.java)
-                VpnPlugin.handleSmartResume(options)
-                result.success(true)
-            }
-            "setSmartStopped" -> {
-                GlobalState.isSmartStopped = call.argument<Boolean>("value") ?: false
-                result.success(true)
+            "resumeCore" -> {
+                Thread {
+                    VpnPlugin.resumeCore()
+                    mainHandler.post { result.success(true) }
+                }.start()
             }
             "isSmartStopped" -> result.success(GlobalState.isSmartStopped)
-            "getLocalIpAddresses" -> result.success(VpnPlugin.getLocalIpAddresses())
-            "getLocalGateways" -> result.success(VpnPlugin.getLocalGateways())
-            "getCurrentDns" -> result.success(VpnPlugin.getCurrentDns())
-            "setQuickResponse" -> {
-                VpnPlugin.setQuickResponse(call.argument<Boolean>("enabled") ?: false)
+            "requestSmartAutoStopCheck" -> {
+                VpnPlugin.requestSmartAutoStopCheck()
                 result.success(true)
             }
+            "getLocalIpAddresses" -> result.success(VpnPlugin.getLocalIpAddresses())
+            "getLocalGateways" -> result.success(VpnPlugin.getLocalGateways())
+            "getNetworkInfo" -> result.success(VpnPlugin.getNetworkInfo())
+            "getCurrentDns" -> result.success(VpnPlugin.getCurrentDns())
             "init" -> {
                 GlobalState.getCurrentAppPlugin()?.requestNotificationsPermission()
                 GlobalState.initServiceEngine()
@@ -107,29 +100,9 @@ class ServicePlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
                 )
                 result.success(true)
             }
-            "updateSpeedWidget" -> {
-                // 桌面网速小组件直推:与通知速度同链路,原生直接渲染 RemoteViews
-                com.appshub.bettbox.receivers.BettboxWidgetProvider.push(
-                    com.appshub.bettbox.BettboxApplication.getAppContext(),
-                    call.argument<String>("node") ?: "",
-                    call.argument<String>("up") ?: "",
-                    call.argument<String>("down") ?: "",
-                )
-                result.success(true)
-            }
             "restoreNotification" -> {
-                val context = com.appshub.bettbox.BettboxApplication.getAppContext()
-                if (context != null) {
-                    GlobalState.isSpeedNotificationEnabled = false
-
-                    val intent = android.content.Intent(
-                        context, 
-                        com.appshub.bettbox.services.BettboxVpnService::class.java
-                    ).apply {
-                        action = "RESTORE_NOTIFICATION"
-                    }
-                    runCatching { context.startService(intent) }
-                }
+                GlobalState.isSpeedNotificationEnabled = false
+                VpnPlugin.restoreNotification()
                 result.success(true)
             }
             "setHighPriorityNotification" -> {

@@ -1,16 +1,17 @@
 import 'package:bett_box/common/common.dart';
 import 'package:bett_box/enum/enum.dart';
 import 'package:bett_box/models/common.dart';
-import 'package:bett_box/models/config.dart';
+import 'package:bett_box/models/profile.dart';
 import 'package:bett_box/models/widget.dart';
 import 'package:bett_box/providers/providers.dart';
 import 'package:bett_box/state.dart';
 import 'package:bett_box/views/proxies/list.dart';
 import 'package:bett_box/views/proxies/providers.dart';
 import 'package:bett_box/widgets/widgets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../profiles/managed_options.dart' show showManagedOptions;
 import '../profiles/scripts.dart'
     show showGroupSwitchOptions, showScriptCustomOptions;
 import 'advanced_settings.dart';
@@ -27,24 +28,29 @@ class ProxiesView extends ConsumerStatefulWidget {
 
 class _ProxiesViewState extends ConsumerState<ProxiesView> {
   final GlobalKey<ProxiesTabViewState> _proxiesTabKey = GlobalKey();
+  final GlobalKey<ProxiesListViewState> _proxiesListKey = GlobalKey();
   bool _hasProviders = false;
   bool _isTab = false;
 
   List<Widget> _buildActions() {
-    final (autoStickyHeader, showHiddenItems) = ref.watch(
+    final (autoStickyHeader, showHiddenItems, hideTimeoutProxies) = ref.watch(
       proxiesStyleSettingProvider.select(
-        (state) => (state.autoStickyHeader, state.showHiddenItems),
+        (state) => (
+          state.autoStickyHeader,
+          state.showHiddenItems,
+          state.hideTimeoutProxies,
+        ),
       ),
     );
-    final (scriptOn, compatible) = ref.watch(
-      scriptStateProvider.select(
-        (s) => (s.currentId != null, s.currentScript?.isCompatibleWithBettbox ?? false),
+    final compatible = ref.watch(
+      currentProfileScriptProvider.select(
+        (script) => script?.compatible ?? false,
       ),
     );
-    final profileOverride = ref.watch(
-      currentProfileProvider.select((p) => p?.useScriptOverride ?? false),
+    final managed = ref.watch(
+      currentProfileProvider.select((p) => p?.isManaged ?? false),
     );
-    final hasScriptCustom = scriptOn && compatible && profileOverride;
+    final hasScriptCustom = managed || compatible;
     final hasGroupCustom =
         !hasScriptCustom && ref.read(currentProfileIdProvider) != null;
     final hasCustom = hasScriptCustom || hasGroupCustom;
@@ -150,6 +156,21 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
                     );
               },
             ),
+            PopupMenuItemData(
+              icon: hideTimeoutProxies
+                  ? Icons.check_circle_rounded
+                  : Icons.circle_outlined,
+              label: appLocalizations.hideTimeoutProxies,
+              onPressed: () {
+                ref
+                    .read(proxiesStyleSettingProvider.notifier)
+                    .updateState(
+                      (state) => state.copyWith(
+                        hideTimeoutProxies: !hideTimeoutProxies,
+                      ),
+                    );
+              },
+            ),
           ],
         ),
       ),
@@ -200,21 +221,28 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
     );
   }
 
+  void _collapseAllGroups() {
+    _proxiesListKey.currentState?.collapseAll();
+  }
+
   void _onSearch(String value) {
     ref.read(queryProvider.notifier).value = value;
   }
 
   Future<void> _handleCustomOptions() async {
-    final profileOverride =
-        ref.read(currentProfileProvider)?.useScriptOverride ?? false;
-    final script = ref.read(scriptStateProvider).currentScript;
-    if (script != null && script.isCompatibleWithBettbox && profileOverride) {
-      await showScriptCustomOptions(context, ref, script: script);
+    final profile = ref.read(currentProfileProvider);
+    if (profile?.isManaged ?? false) {
+      await showManagedOptions(context);
+      return;
+    }
+    final script = ref.read(currentProfileScriptProvider);
+    if (script != null && script.compatible) {
+      await showScriptCustomOptions(context, script: script);
       return;
     }
     final profileId = ref.read(currentProfileIdProvider);
     if (profileId != null) {
-      await showGroupSwitchOptions(context, ref, profileId: profileId);
+      await showGroupSwitchOptions(context, profileId: profileId);
     }
   }
 
@@ -248,8 +276,10 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
 
   @override
   Widget build(BuildContext context) {
-    final proxiesType = ref.watch(
-      proxiesStyleSettingProvider.select((state) => state.type),
+    final (proxiesType, autoStickyHeader) = ref.watch(
+      proxiesStyleSettingProvider.select(
+        (state) => (state.type, state.autoStickyHeader),
+      ),
     );
     final hasGroups = ref.watch(
       groupsProvider.select((state) => state.isNotEmpty),
@@ -259,15 +289,18 @@ class _ProxiesViewState extends ConsumerState<ProxiesView> {
       floatingActionButton: _buildFAB(),
       actions: _buildActions(),
       title: appLocalizations.proxies,
+      scrollEdgeFade: proxiesType == ProxiesType.list && !autoStickyHeader,
+      onAppBarDoubleTap: proxiesType == ProxiesType.list
+          ? _collapseAllGroups
+          : null,
       searchState: AppBarSearchState(onSearch: _onSearch),
       body: switch (hasGroups) {
         false => NullStatus(label: appLocalizations.noProxy),
         true => switch (proxiesType) {
           ProxiesType.tab => ProxiesTabView(key: _proxiesTabKey),
-          ProxiesType.list => const ProxiesListView(),
+          ProxiesType.list => ProxiesListView(key: _proxiesListKey),
         },
       },
     );
   }
 }
-

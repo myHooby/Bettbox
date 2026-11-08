@@ -3,8 +3,18 @@ package main
 import (
 	b "bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"io"
+	"maps"
+	"os"
+	"runtime/debug"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/metacubex/mihomo/adapter"
 	"github.com/metacubex/mihomo/adapter/inbound"
 	"github.com/metacubex/mihomo/adapter/outboundgroup"
@@ -24,13 +34,6 @@ import (
 	"github.com/metacubex/mihomo/log"
 	rp "github.com/metacubex/mihomo/rules/provider"
 	"github.com/metacubex/mihomo/tunnel"
-	"os"
-	"path/filepath"
-	"runtime"
-	"runtime/debug"
-	"strings"
-	"sync"
-	"time"
 )
 
 var (
@@ -41,12 +44,6 @@ var (
 	runLock          sync.Mutex
 	mBatch, _        = batch.New[bool](context.Background(), batch.WithConcurrencyNum[bool](50))
 )
-
-type ExternalProviders []ExternalProvider
-
-func (a ExternalProviders) Len() int           { return len(a) }
-func (a ExternalProviders) Less(i, j int) bool { return a[i].Name < a[j].Name }
-func (a ExternalProviders) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 
 func getExternalProvidersRaw() map[string]cp.Provider {
 	eps := make(map[string]cp.Provider)
@@ -70,7 +67,6 @@ func toExternalProvider(p cp.Provider) (*ExternalProvider, error) {
 			UpdateAt:         p.UpdatedAt(),
 			Path:             p.Vehicle().Path(),
 			SubscriptionInfo: p.GetSubscriptionInfo(),
-			Proxies:          p.Proxies(),
 		}, nil
 	case *provider.InlineProvider:
 		return &ExternalProvider{
@@ -81,7 +77,6 @@ func toExternalProvider(p cp.Provider) (*ExternalProvider, error) {
 			UpdateAt:         time.Now(),
 			Path:             "",
 			SubscriptionInfo: nil,
-			Proxies:          p.Proxies(),
 		}, nil
 	case *rp.RuleSetProvider:
 		return &ExternalProvider{
@@ -173,7 +168,12 @@ func defaultSetupParams() *SetupParams {
 }
 
 func readFile(path string) ([]byte, error) {
-	return os.ReadFile(path)
+	file, err := openInputFile(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	return io.ReadAll(file)
 }
 
 func updateConfig(params *UpdateParams) {
@@ -263,12 +263,12 @@ func updateConfig(params *UpdateParams) {
 		if params.Tun.StrictRoute != nil {
 			general.Tun.StrictRoute = *params.Tun.StrictRoute
 		}
+		if params.Tun.DNSMode != nil {
+			general.Tun.DNSMode = *params.Tun.DNSMode
+		}
 		general.Tun.DNSHijack = *params.Tun.DNSHijack
 		general.Tun.Stack = *params.Tun.Stack
 		general.Tun.DisableICMPForwarding = *params.Tun.DisableICMPForwarding
-		if params.Tun.CongestionController != nil {
-			general.Tun.CongestionController = *params.Tun.CongestionController
-		}
 	}
 
 	updateListeners()
@@ -371,19 +371,119 @@ func tryUnloadGeoData() {
 	}
 }
 
-func setupConfig(params *SetupParams) error {
-	runLock.Lock()
-	defer runLock.Unlock()
-
-	constant.DefaultTestURL = params.TestURL
-
-	buf, err := readFile(filepath.Join(constant.Path.HomeDir(), constant.Path.Config()))
-	if err != nil {
-		return err
+func residentRawConfig(raw *config.RawConfig) *config.RawConfig {
+	if raw == nil {
+		return nil
 	}
-	rawCfg, err := config.UnmarshalRawConfig(buf)
+	resident := *raw
+	resident.Proxy = nil
+	resident.ProxyGroup = nil
+	return &resident
+}
+
+type preparedSetup struct {
+	key    string
+	rawCfg *config.RawConfig
+	cfg    *config.Config
+	global string
+	expire time.Time
+	reused bool
+}
+
+var (
+	preparedSetupLock  sync.Mutex
+	lastPreparedSetup  *preparedSetup
+	preparedSetupTimer *time.Timer
+	preparedSetupLimit = time.Minute
+)
+
+func storePreparedSetup(prepared *preparedSetup) {
+	if prepared.key == "" {
+		return
+	}
+	prepared.expire = time.Now().Add(preparedSetupLimit)
+	preparedSetupLock.Lock()
+	defer preparedSetupLock.Unlock()
+	lastPreparedSetup = prepared
+	if preparedSetupTimer != nil {
+		preparedSetupTimer.Stop()
+	}
+	preparedSetupTimer = time.AfterFunc(preparedSetupLimit, func() {
+		preparedSetupLock.Lock()
+		defer preparedSetupLock.Unlock()
+		if lastPreparedSetup == prepared {
+			lastPreparedSetup = nil
+		}
+	})
+}
+
+func takePreparedSetup(key string) *preparedSetup {
+	preparedSetupLock.Lock()
+	defer preparedSetupLock.Unlock()
+	prepared := lastPreparedSetup
+	lastPreparedSetup = nil
+	if prepared == nil || prepared.key != key || time.Now().After(prepared.expire) {
+		return nil
+	}
+	prepared.reused = true
+	return prepared
+}
+
+func setupKey(params *SetupParams, profile []byte) string {
+	patch, err := json.Marshal(params.Patch)
 	if err != nil {
-		return err
+		return ""
+	}
+	hash := sha256.New()
+	hash.Write(profile)
+	hash.Write([]byte{0})
+	hash.Write(patch)
+	hash.Write([]byte{0})
+	hash.Write([]byte(params.AgeSecretKey))
+	hash.Write([]byte{0})
+	hash.Write([]byte(params.TestURL))
+	if params.OverrideTestUrl {
+		hash.Write([]byte{1})
+	}
+	return hex.EncodeToString(hash.Sum(nil))
+}
+
+func loadSetupConfig(params *SetupParams) (*config.RawConfig, string, string, error) {
+	if params.ScriptedConfig != "" {
+		rawCfg, global, err := loadPatchedConfig(params)
+		return rawCfg, global, "", err
+	}
+	if params.ProfilePath == "" {
+		return nil, "", "", errors.New("profile path is empty")
+	}
+	buf, err := readFile(params.ProfilePath)
+	if err != nil {
+		return nil, "", "", err
+	}
+	key := setupKey(params, buf)
+	rawCfg, err := parseProfile(buf, params.AgeSecretKey)
+	if err != nil || params.Patch == nil {
+		return rawCfg, "", key, err
+	}
+	global, err := applyPatch(rawCfg, params.Patch)
+	return rawCfg, global, key, err
+}
+
+func prepareSetup(params *SetupParams) (*preparedSetup, error) {
+	if params.ScriptedConfig == "" && params.ProfilePath != "" {
+		buf, err := readFile(params.ProfilePath)
+		if err != nil {
+			return nil, err
+		}
+		if prepared := takePreparedSetup(setupKey(params, buf)); prepared != nil {
+			return prepared, nil
+		}
+	} else {
+		takePreparedSetup("")
+	}
+	rawCfg, global, key, err := loadSetupConfig(params)
+	if err != nil {
+		return nil, err
 	}
 
 	if params.OverrideTestUrl && rawCfg.ProxyGroup != nil {
@@ -392,19 +492,53 @@ func setupConfig(params *SetupParams) error {
 		}
 	}
 
-	currentConfig, err = config.ParseRawConfig(rawCfg)
+	cfg, err := config.ParseRawConfig(rawCfg)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	currentRawConfig = rawCfg
+	ensureTunInet6(cfg)
+	return &preparedSetup{key: key, rawCfg: rawCfg, cfg: cfg, global: global}, nil
+}
+
+func setupConfig(params *SetupParams) (string, error) {
+	runLock.Lock()
+	defer runLock.Unlock()
+	cancelDelayBatches()
+
+	constant.DefaultTestURL = params.TestURL
+
+	prepareStart := time.Now()
+	prepared, err := prepareSetup(params)
+	if err != nil {
+		return "", err
+	}
+	preloadBundledRuleSets(prepared.rawCfg)
+	applyStart := time.Now()
+	oldProxies, oldProviders := tunnel.Proxies(), tunnel.Providers()
+	currentConfig = prepared.cfg
+	currentRawConfig = residentRawConfig(prepared.rawCfg)
 	hub.ApplyConfig(currentConfig)
-	patchSelectGroup(params.SelectedMap)
+	closeIdleOutbounds(oldProxies, oldProviders)
+	resetGroupShapes()
+	resetDelayState()
+	selectedMap := params.SelectedMap
+	if prepared.global != "" {
+		selectedMap = make(map[string]string, len(params.SelectedMap)+1)
+		maps.Copy(selectedMap, params.SelectedMap)
+		selectedMap["GLOBAL"] = prepared.global
+	}
+	patchSelectGroup(selectedMap)
 	updateListeners()
 	tryUnloadGeoData()
-	runtime.GC()
 	debug.FreeOSMemory()
 	schedulePermissionSync()
-	return nil
+	log.Infoln(
+		"[APP] setup config: prepare %s (reused: %t), apply %s",
+		applyStart.Sub(prepareStart).Round(time.Millisecond),
+		prepared.reused,
+		time.Since(applyStart).Round(time.Millisecond),
+	)
+	return prepared.global, nil
 }
 
 func UnmarshalJson(data []byte, v any) error {

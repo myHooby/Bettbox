@@ -64,6 +64,7 @@ app.*.map.json
 /android/app/release
 
 /android/core/.cxx
+/android/.kotlin/
 
 #libclash
 /libclash/
@@ -83,3 +84,4 @@ app.*.map.json
 /assets/data/geoip.metadb
 /assets/data/ASN.mmdb
 /assets/data/zash.zip
+/test/private/

@@ -8,9 +8,52 @@ import 'package:bett_box/plugins/app.dart';
 import 'package:bett_box/providers/providers.dart';
 import 'package:bett_box/state.dart';
 import 'package:bett_box/widgets/widgets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
+
+final _packageNameRegex = RegExp(r'^[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)+$');
+final _packageSplitRegex = RegExp(r'[\n,\s]+');
+
+final _packageIconCache = <String, Uint8List?>{};
+final _packageIconPending = <String, Future<Uint8List?>>{};
+const _maxPackageIconCacheSize = 256;
+
+void _cachePackageIcon(String packageName, Uint8List? bytes) {
+  _packageIconCache.remove(packageName);
+  while (_packageIconCache.length >= _maxPackageIconCacheSize) {
+    _packageIconCache.remove(_packageIconCache.keys.first);
+  }
+  _packageIconCache[packageName] = bytes;
+}
+
+Future<Uint8List?> _getPackageIcon(
+  String packageName, {
+  bool forceRefresh = false,
+}) {
+  if (forceRefresh) {
+    _packageIconCache.remove(packageName);
+    _packageIconPending.remove(packageName);
+  }
+  if (_packageIconCache.containsKey(packageName)) {
+    final bytes = _packageIconCache[packageName];
+    _cachePackageIcon(packageName, bytes);
+    return Future.value(bytes);
+  }
+  return _packageIconPending.putIfAbsent(packageName, () async {
+    try {
+      final bytes = await app.getPackageIcon(
+        packageName,
+        forceRefresh: forceRefresh,
+      );
+      _cachePackageIcon(packageName, bytes);
+      return bytes;
+    } finally {
+      _packageIconPending.remove(packageName);
+    }
+  });
+}
 
 // Force refresh icon flag
 final forceRefreshIconProvider = StateProvider<bool>((ref) => false);
@@ -39,7 +82,22 @@ class _AccessViewState extends ConsumerState<AccessView>
     _updateInitList();
     _controller = ScrollController();
     WidgetsBinding.instance.addObserver(this);
-    _checkPermissionAndLoadPackages(interactive: true);
+    _prefetchPackages();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.afterRouteTransition(() {
+        if (!mounted) return;
+        _checkPermissionAndLoadPackages(interactive: true);
+      });
+    });
+  }
+
+  Future<void> _prefetchPackages() async {
+    if (ref.read(packagesProvider).isNotEmpty) return;
+    try {
+      if (!await app.hasPackageListPermission()) return;
+      await app.getPackages();
+    } catch (_) {}
   }
 
   @override
@@ -284,6 +342,8 @@ class _AccessViewState extends ConsumerState<AccessView>
         // Reload app list (auto-checks and requests permissions)
         await globalState.appController.safeRun(() async {
           // Clear cache, force reload
+          _packageIconCache.clear();
+          _packageIconPending.clear();
           // Mark as force refresh mode
           ref.read(forceRefreshIconProvider.notifier).state = true;
           await _checkPermissionAndLoadPackages(
@@ -339,33 +399,35 @@ class _AccessViewState extends ConsumerState<AccessView>
   }
 
   Future<void> _intelligentSelected() async {
-    final packageNames = ref.read(
-      packageListSelectorStateProvider.select(
-        (state) => state.list.map((item) => item.packageName),
-      ),
-    );
     final commonScaffoldState = context.commonScaffoldState;
     if (commonScaffoldState?.mounted != true) return;
-    final selectedPackageNames =
-        (await globalState.appController.safeRun<List<String>>(
-          needLoading: true,
-          () async {
-            return await app.getChinaPackageNames();
-          },
-        ))?.toSet() ??
-        {};
-    final acceptList = packageNames
-        .where((item) => !selectedPackageNames.contains(item))
-        .toList();
-    final rejectList = packageNames
-        .where((item) => selectedPackageNames.contains(item))
-        .toList();
+    final chinaPackageNames = await globalState.appController
+        .safeRun<List<String>>(needLoading: true, () async {
+          return await app.getChinaPackageNames();
+        });
+    if (chinaPackageNames == null || !mounted) return;
+    final china = chinaPackageNames.toSet();
+    final visible = ref
+        .read(packageListSelectorStateProvider)
+        .list
+        .map((item) => item.packageName)
+        .toSet();
+    List<String> withVisible(List<String> list, bool Function(String) test) => [
+      ...list.where((item) => !visible.contains(item)),
+      ...visible.where(test),
+    ];
     ref
         .read(vpnSettingProvider.notifier)
         .updateState(
           (state) => state.copyWith.accessControl(
-            acceptList: acceptList,
-            rejectList: rejectList,
+            acceptList: withVisible(
+              state.accessControl.acceptList,
+              (item) => !china.contains(item),
+            ),
+            rejectList: withVisible(
+              state.accessControl.rejectList,
+              china.contains,
+            ),
           ),
         );
   }
@@ -392,28 +454,30 @@ class _AccessViewState extends ConsumerState<AccessView>
     );
   }
 
-  void _handleSelected(List<String> valueList, Package package, bool? value) {
+  void _handleSelected(Set<String> selectedSet, Package package, bool? value) {
+    final newSelectedSet = Set<String>.of(selectedSet);
     if (value == true) {
-      valueList.add(package.packageName);
+      newSelectedSet.add(package.packageName);
     } else {
-      valueList.remove(package.packageName);
+      newSelectedSet.remove(package.packageName);
     }
+    final valueList = newSelectedSet.toList();
     ref.read(vpnSettingProvider.notifier).updateState((state) {
       final currentManualList = state.accessControl.manualList;
-      final newManualList = value == false &&
-              currentManualList.contains(package.packageName)
+      final newManualList =
+          value == false && currentManualList.contains(package.packageName)
           ? currentManualList.where((e) => e != package.packageName).toList()
           : currentManualList;
       return switch (state.accessControl.mode ==
           AccessControlMode.acceptSelected) {
         true => state.copyWith.accessControl(
-            acceptList: valueList,
-            manualList: newManualList,
-          ),
+          acceptList: valueList,
+          manualList: newManualList,
+        ),
         false => state.copyWith.accessControl(
-            rejectList: valueList,
-            manualList: newManualList,
-          ),
+          rejectList: valueList,
+          manualList: newManualList,
+        ),
       };
     });
   }
@@ -429,8 +493,13 @@ class _AccessViewState extends ConsumerState<AccessView>
           : rejectList,
     );
     final currentList = accessControl.currentList;
-    final packageNameList = packages.map((e) => e.packageName).toList();
-    final valueList = currentList.intersection(packageNameList);
+    final currentSet = currentList.toSet();
+    final selectedSet = <String>{};
+    for (final package in packages) {
+      if (currentSet.contains(package.packageName)) {
+        selectedSet.add(package.packageName);
+      }
+    }
     final describe = accessControlMode == AccessControlMode.acceptSelected
         ? '${appLocalizations.accessControlAllowDesc} (${appLocalizations.whitelistMode})'
         : '${appLocalizations.accessControlNotAllowDesc} (${appLocalizations.blacklistMode})';
@@ -515,7 +584,7 @@ class _AccessViewState extends ConsumerState<AccessView>
                                           ),
                                           Flexible(
                                             child: Text(
-                                              '${valueList.length}',
+                                              '${selectedSet.length}',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .labelLarge
@@ -542,9 +611,10 @@ class _AccessViewState extends ConsumerState<AccessView>
                                 Flexible(
                                   child: _buildSelectedAllButton(
                                     isSelectedAll:
-                                        valueList.length ==
-                                        packageNameList.length,
-                                    allValueList: packageNameList,
+                                        selectedSet.length == packages.length,
+                                    allValueList: packages
+                                        .map((e) => e.packageName)
+                                        .toList(),
                                   ),
                                 ),
                                 Flexible(child: _buildSettingButton()),
@@ -562,7 +632,12 @@ class _AccessViewState extends ConsumerState<AccessView>
                     future: _completer.future,
                     builder: (_, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(
+                          child: SyncedLoading(
+                            size: 40,
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
                       }
                       if (_packageListPermissionDenied) {
                         return _buildPackageListPermissionDeniedView();
@@ -587,13 +662,13 @@ class _AccessViewState extends ConsumerState<AccessView>
                                     child: PackageListItem(
                                       key: Key(package.packageName),
                                       package: package,
-                                      value: valueList.contains(
+                                      value: selectedSet.contains(
                                         package.packageName,
                                       ),
                                       isActive: accessControl.enable,
                                       onChanged: (value) {
                                         _handleSelected(
-                                          valueList,
+                                          selectedSet,
                                           package,
                                           value,
                                         );
@@ -664,15 +739,16 @@ class PackageListItem extends ConsumerWidget {
             width: 48,
             height: 48,
             child: FutureBuilder<Uint8List?>(
-              future: app.getPackageIcon(
+              initialData: _packageIconCache[package.packageName],
+              future: _getPackageIcon(
                 package.packageName,
                 forceRefresh: forceRefresh,
               ),
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data != null) {
-                  final devicePixelRatio = MediaQuery.of(
+                  final devicePixelRatio = MediaQuery.devicePixelRatioOf(
                     context,
-                  ).devicePixelRatio;
+                  );
                   final cacheSize = (48 * devicePixelRatio).ceil();
 
                   return Image.memory(
@@ -758,31 +834,33 @@ class AccessControlSearchDelegate extends SearchDelegate {
 
   void _handleSelected(
     WidgetRef ref,
-    List<String> valueList,
+    Set<String> selectedSet,
     Package package,
     bool? value,
   ) {
+    final newSelectedSet = Set<String>.of(selectedSet);
     if (value == true) {
-      valueList.add(package.packageName);
+      newSelectedSet.add(package.packageName);
     } else {
-      valueList.remove(package.packageName);
+      newSelectedSet.remove(package.packageName);
     }
+    final valueList = newSelectedSet.toList();
     ref.read(vpnSettingProvider.notifier).updateState((state) {
       final currentManualList = state.accessControl.manualList;
-      final newManualList = value == false &&
-              currentManualList.contains(package.packageName)
+      final newManualList =
+          value == false && currentManualList.contains(package.packageName)
           ? currentManualList.where((e) => e != package.packageName).toList()
           : currentManualList;
       return switch (state.accessControl.mode ==
           AccessControlMode.acceptSelected) {
         true => state.copyWith.accessControl(
-            acceptList: valueList,
-            manualList: newManualList,
-          ),
+          acceptList: valueList,
+          manualList: newManualList,
+        ),
         false => state.copyWith.accessControl(
-            rejectList: valueList,
-            manualList: newManualList,
-          ),
+          rejectList: valueList,
+          manualList: newManualList,
+        ),
       };
     });
   }
@@ -791,20 +869,19 @@ class AccessControlSearchDelegate extends SearchDelegate {
     final lowQuery = query.toLowerCase();
     return Consumer(
       builder: (context, ref, _) {
-        final vm3 = ref.watch(
+        final (packages, isAccessControl, currentList) = ref.watch(
           packageListSelectorStateProvider.select(
-            (state) => VM3(
-              a: state.getSortList(
+            (state) => (
+              state.getSortList(
                 state.accessControl.mode == AccessControlMode.acceptSelected
                     ? acceptList
                     : rejectList,
               ),
-              b: state.accessControl.enable,
-              c: state.accessControl.currentList,
+              state.accessControl.enable,
+              state.accessControl.currentList,
             ),
           ),
         );
-        final packages = vm3.a;
 
         // Search filter (inside Consumer, auto-responds to query changes)
         final queryPackages = query.isEmpty
@@ -817,10 +894,13 @@ class AccessControlSearchDelegate extends SearchDelegate {
                   )
                   .toList();
 
-        final isAccessControl = vm3.b;
-        final currentList = vm3.c;
-        final packageNameList = packages.map((e) => e.packageName).toList();
-        final valueList = currentList.intersection(packageNameList);
+        final currentSet = currentList.toSet();
+        final selectedSet = <String>{};
+        for (final package in packages) {
+          if (currentSet.contains(package.packageName)) {
+            selectedSet.add(package.packageName);
+          }
+        }
 
         return DisabledMask(
           status: !isAccessControl,
@@ -832,10 +912,10 @@ class AccessControlSearchDelegate extends SearchDelegate {
               return PackageListItem(
                 key: Key(package.packageName),
                 package: package,
-                value: valueList.contains(package.packageName),
+                value: selectedSet.contains(package.packageName),
                 isActive: isAccessControl,
                 onChanged: (value) {
-                  _handleSelected(ref, valueList, package, value);
+                  _handleSelected(ref, selectedSet, package, value);
                 },
               );
             },
@@ -897,6 +977,7 @@ class _AccessControlPanelState extends ConsumerState<AccessControlPanel> {
   List<Widget> _buildModeSetting() {
     return generateSection(
       plain: true,
+      isFirst: true,
       title: appLocalizations.mode,
       items: [
         SingleChildScrollView(
@@ -986,11 +1067,11 @@ class _AccessControlPanelState extends ConsumerState<AccessControlPanel> {
           scrollDirection: Axis.horizontal,
           child: Consumer(
             builder: (_, ref, _) {
-              final vm2 = ref.watch(
+              final (isFilterSystemApp, isFilterNonInternetApp) = ref.watch(
                 vpnSettingProvider.select(
-                  (state) => VM2(
-                    a: state.accessControl.isFilterSystemApp,
-                    b: state.accessControl.isFilterNonInternetApp,
+                  (state) => (
+                    state.accessControl.isFilterSystemApp,
+                    state.accessControl.isFilterNonInternetApp,
                   ),
                 ),
               );
@@ -999,26 +1080,26 @@ class _AccessControlPanelState extends ConsumerState<AccessControlPanel> {
                 children: [
                   SettingTextCard(
                     appLocalizations.systemApp,
-                    isSelected: vm2.a == false,
+                    isSelected: isFilterSystemApp == false,
                     onPressed: () {
                       ref
                           .read(vpnSettingProvider.notifier)
                           .updateState(
                             (state) => state.copyWith.accessControl(
-                              isFilterSystemApp: !vm2.a,
+                              isFilterSystemApp: !isFilterSystemApp,
                             ),
                           );
                     },
                   ),
                   SettingTextCard(
                     appLocalizations.noNetworkApp,
-                    isSelected: vm2.b == false,
+                    isSelected: isFilterNonInternetApp == false,
                     onPressed: () {
                       ref
                           .read(vpnSettingProvider.notifier)
                           .updateState(
                             (state) => state.copyWith.accessControl(
-                              isFilterNonInternetApp: !vm2.b,
+                              isFilterNonInternetApp: !isFilterNonInternetApp,
                             ),
                           );
                     },
@@ -1051,19 +1132,22 @@ class _AccessControlPanelState extends ConsumerState<AccessControlPanel> {
       try {
         newAccessControl = AccessControl.fromJson(json.decode(text));
       } catch (_) {
-        final packageNameRegex = RegExp(r'^[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)+$');
         final packages = text
-            .split(RegExp(r'[\n,\s]+'))
+            .split(_packageSplitRegex)
             .map((e) => e.trim())
-            .where((e) => packageNameRegex.hasMatch(e))
+            .where((e) => _packageNameRegex.hasMatch(e))
             .toList();
 
         final currentState = ref.read(vpnSettingProvider).accessControl;
         final isAccept = currentState.mode == AccessControlMode.acceptSelected;
-        final currentList =
-            isAccept ? currentState.acceptList : currentState.rejectList;
+        final currentList = isAccept
+            ? currentState.acceptList
+            : currentState.rejectList;
         final newList = {...currentList, ...packages}.toList();
-        final newManualList = {...currentState.manualList, ...packages}.toList();
+        final newManualList = {
+          ...currentState.manualList,
+          ...packages,
+        }.toList();
 
         newAccessControl = currentState.copyWith(
           acceptList: isAccept ? newList : currentState.acceptList,
@@ -1072,7 +1156,9 @@ class _AccessControlPanelState extends ConsumerState<AccessControlPanel> {
         );
       }
 
-      ref.read(vpnSettingProvider.notifier).updateState(
+      ref
+          .read(vpnSettingProvider.notifier)
+          .updateState(
             (state) => state.copyWith(accessControl: newAccessControl),
           );
     });
@@ -1117,18 +1203,23 @@ class _AccessControlPanelState extends ConsumerState<AccessControlPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ..._buildModeSetting(),
-            ..._buildSortSetting(),
-            ..._buildSourceSetting(),
-            ..._buildActionSetting(),
-          ],
+    return ScrollEdgeRise(
+      builder: (_, rise) => SingleChildScrollView(
+        padding: EdgeInsets.only(top: 8 + rise),
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: 32 + MediaQuery.paddingOf(context).bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ..._buildModeSetting(),
+              ..._buildSortSetting(),
+              ..._buildSourceSetting(),
+              ..._buildActionSetting(),
+            ],
+          ),
         ),
       ),
     );

@@ -5,7 +5,8 @@ import 'package:collection/collection.dart';
 import 'package:bett_box/common/common.dart';
 import 'package:bett_box/enum/enum.dart';
 import 'package:bett_box/models/models.dart';
-import 'package:flutter/material.dart';
+import 'package:bett_box/state.dart';
+import 'package:material_ui/material_ui.dart';
 
 const appName = AppIdentity.displayName;
 const appHelperService = WindowsHelperIdentity.serviceName;
@@ -25,6 +26,7 @@ final baseInfoEdgeInsets = EdgeInsets.symmetric(
 final defaultTextScaleFactor =
     WidgetsBinding.instance.platformDispatcher.textScaleFactor;
 const httpTimeoutDuration = Duration(milliseconds: 5000);
+const maxDelayTestConcurrency = 100;
 const moreDuration = Duration(milliseconds: 100);
 const animateDuration = Duration(milliseconds: 100);
 const midDuration = Duration(milliseconds: 200);
@@ -34,6 +36,8 @@ const mmdbFileName = 'geoip.metadb';
 const asnFileName = 'ASN.mmdb';
 const geoSiteFileName = 'GeoSite.dat';
 const bundleMRSFileName = 'BundleMRS.7z';
+const bundleMRSRawUrl =
+    'https://raw.githubusercontent.com/appshubcc/bett-rules/meta/';
 final double kHeaderHeight = system.isDesktop ? 40 : 0;
 const profilesDirectoryName = 'profiles';
 const localhost = '127.0.0.1';
@@ -49,19 +53,19 @@ const defaultExternalController = '127.0.0.1:9090';
 const maxMobileWidth = 600;
 const maxLaptopWidth = 840;
 double getFloatingBottomBarReserveHeight(BuildContext context) {
-  final mediaQuery = MediaQuery.of(context);
+  if (globalState.isAndroidTV) return 0;
   final viewBottom = max(
-    mediaQuery.viewPadding.bottom,
-    mediaQuery.padding.bottom,
+    MediaQuery.viewPaddingOf(context).bottom,
+    MediaQuery.paddingOf(context).bottom,
   );
   return 84.0 + (viewBottom > 12 ? viewBottom - 12 : 0);
 }
 
 double getFloatingBottomBarFABReserveHeight(BuildContext context) {
-  final mediaQuery = MediaQuery.of(context);
+  if (globalState.isAndroidTV) return 0;
   final viewBottom = max(
-    mediaQuery.viewPadding.bottom,
-    mediaQuery.padding.bottom,
+    MediaQuery.viewPaddingOf(context).bottom,
+    MediaQuery.paddingOf(context).bottom,
   );
   return 84.0 - min(viewBottom, 12.0);
 }
@@ -88,7 +92,7 @@ const presetTestUrls = [
 ];
 
 // Preset NTP servers
-const defaultNtpServer = 'time.apple.com';
+const defaultNtpServer = 'ntp.aliyun.com';
 const presetNtpServers = [
   'ntp.aliyun.com',
   'time.apple.com',
@@ -135,11 +139,7 @@ const profilesStoreKey = PageStorageKey<String>('profiles');
 
 const defaultPrimaryColor = 0xFF00897B;
 
-double getWidgetHeight(num lines) {
-  return max(lines * 84 + (lines - 1) * 16, 0).ap;
-}
-
-const maxLength = 256;
+const maxLength = 1024;
 const maxLogLength = 512;
 
 final mainIsolate = 'BettboxMainIsolate';
@@ -147,6 +147,20 @@ final mainIsolate = 'BettboxMainIsolate';
 final serviceIsolate = 'BettboxServiceIsolate';
 
 const defaultPrimaryColors = [
+  0xFF1E293B,
+  0xFF1976D2,
+  defaultPrimaryColor,
+  0xFFE91E63,
+  0xFF7B1FA2,
+  0xFFD97706,
+  0xFF4F46E5,
+  0xFF008FB6,
+  0xFF388E3C,
+  0xFF827717,
+  0xFF795548,
+];
+
+const legacyPrimaryColors = [
   0xFF1E293B,
   0xFF1976D2,
   defaultPrimaryColor,

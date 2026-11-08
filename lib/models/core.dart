@@ -10,13 +10,19 @@ part 'generated/core.g.dart';
 abstract mixin class AppMessageListener {
   void onLog(Log log) {}
 
-  void onDelay(Delay delay) {}
+  void onDelays(List<Delay> delays) {}
 
-  void onSpeedTest(SpeedTestProgress progress) {}
+  void onGroupsChanged() {}
 
   void onRequest(TrackerInfo connection) {}
 
-  void onLoaded(String providerName) {}
+  void onSpeedTest(SpeedTestState state) {}
+
+  void onStunTest(StunTestState state) {}
+
+  void onIperf(IperfState state) {}
+
+  void onLocalPing(LocalPingState state) {}
 }
 
 // abstract mixin class ServiceMessageListener {
@@ -31,10 +37,32 @@ abstract class SetupParams with _$SetupParams {
     @JsonKey(name: 'selected-map') required Map<String, String> selectedMap,
     @JsonKey(name: 'test-url') required String testUrl,
     @JsonKey(name: 'override-test-url') @Default(true) bool overrideTestUrl,
+    @JsonKey(name: 'profile-path') @Default('') String profilePath,
+    @JsonKey(name: 'age-secret-key') @Default('') String ageSecretKey,
+    @JsonKey(name: 'scripted-config') @Default('') String scriptedConfig,
+    Map<String, dynamic>? patch,
   }) = _SetupParams;
 
   factory SetupParams.fromJson(Map<String, dynamic> json) =>
       _$SetupParamsFromJson(json);
+}
+
+@freezed
+abstract class SetupResult with _$SetupResult {
+  const factory SetupResult({
+    @Default('') String message,
+    @Default('') String global,
+  }) = _SetupResult;
+
+  factory SetupResult.fromJson(Map<String, dynamic> json) =>
+      _$SetupResultFromJson(json);
+
+  factory SetupResult.fromData(dynamic data) {
+    if (data is Map) {
+      return SetupResult.fromJson(Map<String, dynamic>.from(data));
+    }
+    return SetupResult(message: data?.toString() ?? '');
+  }
 }
 
 @freezed
@@ -65,6 +93,7 @@ abstract class CoreState with _$CoreState {
     @JsonKey(name: 'only-statistics-proxy') required bool onlyStatisticsProxy,
     @JsonKey(name: 'current-profile-name') required String currentProfileName,
     @JsonKey(name: 'bypass-domain') @Default([]) List<String> bypassDomain,
+    @JsonKey(name: 'traffic-stats') required TrafficStatsOptions trafficStats,
   }) = _CoreState;
 
   factory CoreState.fromJson(Map<String, Object?> json) =>
@@ -153,6 +182,7 @@ abstract class Delay with _$Delay {
 }
 
 // 网速测试最终结果:speed 为平均下载速度(字节/秒),失败时为 -1
+// (供代理列表按速度排序与卡片速度显示使用)
 @freezed
 abstract class SpeedResult with _$SpeedResult {
   const factory SpeedResult({
@@ -167,20 +197,6 @@ abstract class SpeedResult with _$SpeedResult {
       _$SpeedResultFromJson(json);
 }
 
-// 网速测试实时进度:由内核消息通道推送
-@freezed
-abstract class SpeedTestProgress with _$SpeedTestProgress {
-  const factory SpeedTestProgress({
-    required String name,
-    required String url,
-    @Default(0) double speed,
-    @Default(0) int bytes,
-    @Default(0) int elapsed,
-  }) = _SpeedTestProgress;
-
-  factory SpeedTestProgress.fromJson(Map<String, Object?> json) =>
-      _$SpeedTestProgressFromJson(json);
-}
 
 @freezed
 abstract class Now with _$Now {
@@ -245,7 +261,6 @@ abstract class ExternalProvider with _$ExternalProvider {
     @Default(false) bool isUpdating,
     @JsonKey(name: 'vehicle-type') required String vehicleType,
     @JsonKey(name: 'update-at') required DateTime updateAt,
-    List<dynamic>? proxies,
   }) = _ExternalProvider;
 
   factory ExternalProvider.fromJson(Map<String, Object?> json) =>
@@ -284,6 +299,19 @@ extension ActionResultExt on ActionResult {
       return Result.error(data);
     }
   }
+}
+
+@freezed
+abstract class ConnectionsSummary with _$ConnectionsSummary {
+  const factory ConnectionsSummary({
+    @Default(0) int total,
+    @Default(0) int tcp,
+    @Default(0) int udp,
+    @JsonKey(name: 'fcm-start') @Default(0) int fcmStart,
+  }) = _ConnectionsSummary;
+
+  factory ConnectionsSummary.fromJson(Map<String, Object?> json) =>
+      _$ConnectionsSummaryFromJson(json);
 }
 
 @freezed

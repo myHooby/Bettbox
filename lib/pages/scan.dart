@@ -5,11 +5,13 @@ import 'package:bett_box/common/common.dart';
 import 'package:bett_box/plugins/app.dart';
 import 'package:bett_box/state.dart';
 import 'package:bett_box/widgets/activate_box.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class ScanPage extends StatefulWidget {
-  const ScanPage({super.key});
+  final bool Function(String value)? accept;
+
+  const ScanPage({super.key, this.accept});
 
   @override
   State<ScanPage> createState() => _ScanPageState();
@@ -34,7 +36,11 @@ class _ScanPageState extends State<ScanPage> with WidgetsBindingObserver {
     _subscription = controller.barcodes.listen(_handleBarcode);
     // Check permission and start camera
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkCameraPermission();
+      if (!mounted) return;
+      context.afterRouteTransition(() {
+        if (!mounted) return;
+        _checkCameraPermission();
+      });
     });
   }
 
@@ -43,7 +49,9 @@ class _ScanPageState extends State<ScanPage> with WidgetsBindingObserver {
     final rawValue = barcodeCapture.barcodes.first.rawValue?.trim();
     if (rawValue == null || rawValue.isEmpty) return;
     _handled = true;
-    if (!rawValue.toLowerCase().isUrl) {
+    final accepted =
+        widget.accept?.call(rawValue) ?? rawValue.toLowerCase().isUrl;
+    if (!accepted) {
       Navigator.pop(context);
       return;
     }
@@ -99,7 +107,7 @@ class _ScanPageState extends State<ScanPage> with WidgetsBindingObserver {
           await controller.start();
         } catch (e) {
           // Handle start error silently
-          commonPrint.log('Camera start error: $e');
+          commonPrint.warn('Camera start error: $e');
         }
       }
     }
@@ -107,7 +115,7 @@ class _ScanPageState extends State<ScanPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    double sideLength = min(400, MediaQuery.of(context).size.width * 0.67);
+    double sideLength = min(400, MediaQuery.sizeOf(context).width * 0.67);
     final scanWindow = Rect.fromCenter(
       center: MediaQuery.sizeOf(context).center(Offset.zero),
       width: sideLength,

@@ -1,0 +1,8 @@
+# ninja log v5
+0	43	1787459293172486948	CMakeFiles/quickjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/cutils.c.o	24c85806c2f428a0
+0	63	1787459293192406150	CMakeFiles/quickjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/libunicode.c.o	5457d3b8bcf762de
+0	76	1787459293205088494	CMakeFiles/quickjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/libregexp.c.o	60284f380cd366b
+1	334	1787459293460810460	CMakeFiles/qjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/ffi.cpp.o	a3658e87f4ec235
+0	1094	1787459294201650962	CMakeFiles/quickjs.dir/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/cxx/quickjs/quickjs.c.o	e7f44332a1a19a8
+1094	1134	1787459294264311000	libquickjs.a	cd5d3da52fbcabfe
+1134	1186	1787459294312340904	/Users/cys/IdeaProjects/Bettbox/build/flutter_qjs/intermediates/cxx/Debug/v3d2u6m5/obj/armeabi-v7a/libqjs.so	29185f4a6b900f6d

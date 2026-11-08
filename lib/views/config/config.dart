@@ -3,7 +3,6 @@ import 'package:bett_box/models/clash_config.dart';
 import 'package:bett_box/models/config.dart';
 import 'package:bett_box/providers/providers.dart';
 import 'package:bett_box/state.dart';
-import 'package:bett_box/views/config/dns.dart';
 import 'package:bett_box/views/config/general.dart';
 import 'package:bett_box/views/config/network.dart';
 import 'package:bett_box/views/config/ntp.dart';
@@ -11,7 +10,7 @@ import 'package:bett_box/views/config/sniffer.dart';
 import 'package:bett_box/views/config/tunnel.dart';
 import 'package:bett_box/views/config/experimental.dart';
 import 'package:bett_box/widgets/widgets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ConfigView extends StatefulWidget {
@@ -57,10 +56,8 @@ class _ConfigViewState extends State<ConfigView> {
                     ref
                         .read(vpnSettingProvider.notifier)
                         .updateState(
-                          (state) => defaultVpnProps.copyWith(
-                            accessControl: state.accessControl,
-                            enable: state.enable,
-                            systemProxy: state.systemProxy,
+                          (state) => state.copyWith(
+                            allowBypass: defaultVpnProps.allowBypass,
                           ),
                         );
                     ref
@@ -78,40 +75,6 @@ class _ConfigViewState extends State<ConfigView> {
             ),
           ],
           builder: (_) => const NetworkListView(),
-        ),
-      ),
-      ListItem.next(
-        title: const Text('DNS'),
-        subtitle: Text(appLocalizations.dnsDesc),
-        leading: const Icon(Icons.dns),
-        delegate: NextDelegate(
-          title: 'DNS',
-          actions: [
-            Consumer(
-              builder: (_, ref, _) {
-                return IconButton(
-                  onPressed: () async {
-                    final res = await globalState.showMessage(
-                      title: appLocalizations.reset,
-                      message: TextSpan(text: appLocalizations.resetTip),
-                    );
-                    if (res != true) {
-                      return;
-                    }
-                    ref
-                        .read(patchClashConfigProvider.notifier)
-                        .updateState(
-                          (state) => state.copyWith(dns: defaultDns),
-                        );
-                  },
-                  tooltip: appLocalizations.reset,
-                  icon: const Icon(Icons.replay),
-                );
-              },
-            ),
-          ],
-          builder: (_) => const DnsListView(),
-          blur: false,
         ),
       ),
       ListItem.next(

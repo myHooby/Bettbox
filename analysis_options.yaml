@@ -7,6 +7,14 @@ analyzer:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "plugins/**"
+    - build/**
+    - dist/**
+    - android/**
+    - windows/**
+    - macos/**
+    - linux/**
+    - ios/**
+    - web/**
 
 linter:
   rules:

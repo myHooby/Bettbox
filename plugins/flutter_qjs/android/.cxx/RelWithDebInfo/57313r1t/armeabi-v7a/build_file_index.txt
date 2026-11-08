@@ -1,0 +1,1 @@
+/Users/cys/IdeaProjects/Bettbox/plugins/flutter_qjs/android/src/main/cxx/CMakeLists.txt
