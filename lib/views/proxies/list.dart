@@ -587,42 +587,6 @@ class _GroupHeader extends ConsumerWidget {
                       );
                     },
                   ),
-                  // 组级网速测试入口:并行测试组内全部节点
-                  AnimatedBuilder(
-                    animation: speedTestCoordinator,
-                    builder: (_, _) {
-                      final isSpeedTesting = speedTestCoordinator.isTestingGroup(group.name);
-                      return _PressScaleWrapper(
-                        enabled: !speedTestCoordinator.isTesting,
-                        child: SizedBox(
-                          width: 44,
-                          height: 36,
-                          child: IconButton(
-                            padding: EdgeInsets.zero,
-                            visualDensity: VisualDensity.compact,
-                            icon: isSpeedTesting
-                                ? const RepaintBoundary(
-                                    child: SizedBox.square(
-                                      dimension: 18,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    ),
-                                  )
-                                : const Icon(Icons.speed),
-                            onPressed: speedTestCoordinator.isTesting
-                                ? null
-                                : () => showGroupSpeedTestSheet(
-                                    context,
-                                    group.all,
-                                    groupName: group.name,
-                                  ),
-                            tooltip: appLocalizations.speedTest,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
                   const SizedBox(width: 6),
                 ],
               ),
