@@ -694,9 +694,9 @@ abstract class ClashHandlerInterface with ClashInterface {
     int timeoutMs,
   ) {
     final speedTestParams = {
-      "proxy-name": proxyName,
-      "timeout": timeoutMs,
-      "test-url": url,
+      'proxy-name': proxyName,
+      'timeout': timeoutMs,
+      'test-url': url,
     };
     // 超时需大于测试时长,为建连与 TLS 握手预留缓冲
     return invoke<String>(

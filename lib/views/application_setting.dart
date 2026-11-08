@@ -629,7 +629,7 @@ class SpeedTestConcurrencyItem extends ConsumerWidget {
         title: appLocalizations.speedTestConcurrency,
         options: _options,
         value: concurrency,
-        textBuilder: (value) => "$value",
+        textBuilder: (value) => '$value',
         onChanged: (value) {
           if (value != null) {
             ref.read(proxiesStyleSettingProvider.notifier).updateState(
