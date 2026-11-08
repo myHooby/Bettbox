@@ -2013,18 +2013,17 @@ class AppController {
     _syncProviderSubscriptions(_ref.read(providersProvider));
   }
 
-  // 网速排序权重:未测(null)与失败(-1)沉底,测试中(0)置顶,速度越快越靠前
+  // 排序入口(桌面托盘等场景使用;代理列表走 SortedGroupProxies provider)
   List<Proxy> getSortProxies({
     required List<Proxy> proxies,
     required ProxiesSortType sortType,
     String? testUrl,
   }) {
-    if (sortType == ProxiesSortType.speed) {
-      refSpeedLookup =
-          (name) => _ref.read(getSpeedProvider(proxyName: name));
-      return sortProxies(proxies, sortType);
-    }
-    if (sortType != ProxiesSortType.delay) {
+    final speedMap = sortType == ProxiesSortType.speed
+        ? _ref.read(speedDataSourceProvider)
+        : null;
+    if (sortType != ProxiesSortType.delay &&
+        sortType != ProxiesSortType.speed) {
       return sortProxies(proxies, sortType);
     }
     final delayOf = createDelayLookup(
@@ -2038,6 +2037,7 @@ class AppController {
       proxies,
       sortType,
       delayOf: (proxyName) => delayOf(proxyName, testUrl),
+      speedOf: speedMap == null ? null : (proxyName) => speedMap[proxyName],
     );
   }
 

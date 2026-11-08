@@ -378,25 +378,25 @@ List<int> sortOrderBySpeed(List<double> values) {
 }
 
 // 网速排序权重:未测(null)与失败(-1)沉底,测试中(0)置顶,速度越快越靠前
-List<double> _speedSortValues(List<Proxy> proxies) {
-  return [
-    for (final proxy in proxies)
-      switch (refSpeedLookup?.call(proxy.name)) {
-        null => 1 << 30 as double,
-        double s when s < 0 => 1 << 30 as double,
-        double s when s == 0 => -(1 << 30) as double,
-        final s => -s,
-      },
-  ];
-}
+List<double> _speedSortValues(
+  List<Proxy> proxies,
+  double? Function(String proxyName)? speedOf,
+) {
+  double weight(double? speed) {
+    // 未测(null)与失败(-1)沉底,测试中(0)置顶,速度越快越靠前
+    if (speed == null || speed < 0) return 1 << 30 as double;
+    if (speed == 0) return -(1 << 30) as double;
+    return -speed;
+  }
 
-// 由 controller 注入的读取函数,避免 provider 依赖倒置
-double? Function(String proxyName)? refSpeedLookup;
+  return [for (final proxy in proxies) weight(speedOf?.call(proxy.name))];
+}
 
 List<Proxy> sortProxies(
   List<Proxy> proxies,
   ProxiesSortType sortType, {
   int? Function(String proxyName)? delayOf,
+  double? Function(String proxyName)? speedOf,
 }) {
   final order = switch (sortType) {
     ProxiesSortType.none => null,
@@ -405,7 +405,7 @@ List<Proxy> sortProxies(
       _delaySortValues(proxies, delayOf),
     ),
     ProxiesSortType.speed => sortOrderBySpeed(
-      _speedSortValues(proxies),
+      _speedSortValues(proxies, speedOf),
     ),
   };
   if (order == null) return proxies;
@@ -584,6 +584,7 @@ class SortedGroupProxies extends _$SortedGroupProxies {
     if (sortType == ProxiesSortType.none) return _lastSorted = proxies;
 
     int? Function(String proxyName)? delayOf;
+    double? Function(String proxyName)? speedOf;
     if (sortType == ProxiesSortType.delay) {
       final lookup = createDelayLookup(
         groups: ref.read(groupsProvider),
@@ -596,15 +597,20 @@ class SortedGroupProxies extends _$SortedGroupProxies {
       );
       delayOf = (proxyName) => lookup(proxyName, group.testUrl);
     }
+    if (sortType == ProxiesSortType.speed) {
+      // watch 测速数据:测速完成后自动触发重排
+      final speedMap = ref.watch(speedDataSourceProvider);
+      speedOf = (proxyName) => speedMap[proxyName];
+    }
     if (proxies.length < backgroundSortThreshold) {
-      return _lastSorted = sortProxies(proxies, sortType, delayOf: delayOf);
+      return _lastSorted = sortProxies(proxies, sortType, delayOf: delayOf, speedOf: speedOf);
     }
     final pending = _reuseOrder(
       _lastSorted ?? (query.isEmpty ? _orderCache[groupName] : null),
       proxies,
     );
     if (pending == null && query.isNotEmpty) {
-      return _lastSorted = sortProxies(proxies, sortType, delayOf: delayOf);
+      return _lastSorted = sortProxies(proxies, sortType, delayOf: delayOf, speedOf: speedOf);
     }
 
     var active = true;
@@ -619,7 +625,7 @@ class SortedGroupProxies extends _$SortedGroupProxies {
       },
       onError: (Object _) {
         if (!active) return;
-        state = _remember(sortProxies(proxies, sortType, delayOf: delayOf));
+        state = _remember(sortProxies(proxies, sortType, delayOf: delayOf, speedOf: speedOf));
       },
     );
     return _lastSorted = pending;
