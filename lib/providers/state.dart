@@ -374,7 +374,8 @@ List<int> _delaySortValues(
 }
 
 List<int> sortOrderBySpeed(List<double> values) {
-  return _sortOrder(values.length, (a, b) => b.compareTo(a));
+  // weight 升序:值越小越靠前(速度快/测试中为负或 0,未测与失败为大哨兵值)
+  return _sortOrder(values.length, (a, b) => values[a].compareTo(values[b]));
 }
 
 // 网速排序权重:未测(null)与失败(-1)沉底,测试中(0)置顶,速度越快越靠前
@@ -384,8 +385,9 @@ List<double> _speedSortValues(
 ) {
   double weight(double? speed) {
     // 未测(null)与失败(-1)沉底,测试中(0)置顶,速度越快越靠前
-    if (speed == null || speed < 0) return 1 << 30 as double;
-    if (speed == 0) return -(1 << 30) as double;
+    // 注意:哨兵值必须用 double 字面量,int 经 as 转换会抛运行时 TypeError
+    if (speed == null || speed < 0) return 1073741824.0;
+    if (speed == 0) return -1073741824.0;
     return -speed;
   }
 
